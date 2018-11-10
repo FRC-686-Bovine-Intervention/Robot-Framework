@@ -2,8 +2,6 @@ package org.usfirst.frc.team686.robot.lib.sensors;
 
 import java.util.TimerTask;
 
-import org.usfirst.frc.team686.robot.Constants;
-
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -107,6 +105,8 @@ public class BNO055 extends GyroBase {
 	
 	// Number of times read took more than READ_TOO_LONG_THRESHOLD seconds (hopefully 0)
 	private int readDurationOver = 0;
+
+
 
 	//State machine variables
 	private volatile int state = 0;
@@ -367,14 +367,17 @@ public class BNO055 extends GyroBase {
 		}
 	};
 	
-	
+
+	// The I2C port the BNO055 is connected to
+    public static final I2C.Port BNO055_PORT = I2C.Port.kOnboard;
+ 	
 	
 	/**
 	 * GyroBase class methods
 	 *
 	 */
 	public static GyroBase getInstance() {
-		return getInstance(Constants.BNO055_PORT);			 
+		return getInstance(BNO055_PORT);			 
 	}
 	public double getHeadingDeg() {
 		return -getHeading();			// sign correction so that heading increases as robot turns to the left 
@@ -883,7 +886,17 @@ public class BNO055 extends GyroBase {
 		
 		return offsets;
 	}
+
 	
+    // BNO055 accelerometer calibration constants
+    // ( -7, -34,  33, -24) - taken 10/14/2016
+    // (-13, -53,  18, -24) - taken 10/14/2016
+    // (  0, -59,  25, -24) - taken 10/14/2016
+    // using average of the above
+    public static short kAccelOffsetX =  -7;
+    public static short kAccelOffsetY = -53;
+    public static short kAccelOffsetZ =   25;
+    public static short kAccelRadius  = -24;
 	
 	
 	public void setCalibrationOffsets()
@@ -891,15 +904,15 @@ public class BNO055 extends GyroBase {
 		int lastMode = getMode();
 		setMode(opmode_t.OPERATION_MODE_CONFIG.getVal());
 
-		write8(reg_t.ACCEL_OFFSET_X_LSB_ADDR, (byte)((Constants.kAccelOffsetX >> 0) & 0xFF));
-		write8(reg_t.ACCEL_OFFSET_X_MSB_ADDR, (byte)((Constants.kAccelOffsetX >> 8) & 0xFF));
-		write8(reg_t.ACCEL_OFFSET_Y_LSB_ADDR, (byte)((Constants.kAccelOffsetY >> 0) & 0xFF));
-		write8(reg_t.ACCEL_OFFSET_Y_MSB_ADDR, (byte)((Constants.kAccelOffsetY >> 8) & 0xFF));
-		write8(reg_t.ACCEL_OFFSET_Z_LSB_ADDR, (byte)((Constants.kAccelOffsetZ >> 0) & 0xFF));
-		write8(reg_t.ACCEL_OFFSET_Z_MSB_ADDR, (byte)((Constants.kAccelOffsetZ >> 8) & 0xFF));
+		write8(reg_t.ACCEL_OFFSET_X_LSB_ADDR, (byte)((kAccelOffsetX >> 0) & 0xFF));
+		write8(reg_t.ACCEL_OFFSET_X_MSB_ADDR, (byte)((kAccelOffsetX >> 8) & 0xFF));
+		write8(reg_t.ACCEL_OFFSET_Y_LSB_ADDR, (byte)((kAccelOffsetY >> 0) & 0xFF));
+		write8(reg_t.ACCEL_OFFSET_Y_MSB_ADDR, (byte)((kAccelOffsetY >> 8) & 0xFF));
+		write8(reg_t.ACCEL_OFFSET_Z_LSB_ADDR, (byte)((kAccelOffsetZ >> 0) & 0xFF));
+		write8(reg_t.ACCEL_OFFSET_Z_MSB_ADDR, (byte)((kAccelOffsetZ >> 8) & 0xFF));
 		
-		write8(reg_t.ACCEL_RADIUS_LSB_ADDR, (byte)((Constants.kAccelRadius >> 0) & 0xFF));
-		write8(reg_t.ACCEL_RADIUS_MSB_ADDR, (byte)((Constants.kAccelRadius >> 8) & 0xFF));
+		write8(reg_t.ACCEL_RADIUS_LSB_ADDR, (byte)((kAccelRadius >> 0) & 0xFF));
+		write8(reg_t.ACCEL_RADIUS_MSB_ADDR, (byte)((kAccelRadius >> 8) & 0xFF));
 
 		// we will only write the accelerometer calibration constants
 		// the gyroscope is calibrated by sitting still

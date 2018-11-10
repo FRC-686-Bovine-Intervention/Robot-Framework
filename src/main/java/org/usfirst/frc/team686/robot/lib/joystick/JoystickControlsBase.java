@@ -11,6 +11,8 @@ public abstract class JoystickControlsBase
 {
     protected final Joystick mStick;
 
+    public static double kJoystickDeadzone = 0.2;   // deadzone at center of joystick extends from +/-kJoystickDeadzone
+
     protected JoystickControlsBase() 
     {
         mStick = new Joystick(0);

@@ -1,6 +1,5 @@
 package org.usfirst.frc.team686.robot.auto.actions;
 
-import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.command_status.DriveState;
 import org.usfirst.frc.team686.robot.lib.sensors.NavX;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
@@ -19,7 +18,14 @@ public class CollisionDetectionAction implements Action
 	double jerkY = 0.0;
 	double lMotorCurrent = 0.0;
 	double rMotorCurrent = 0.0;
-	
+    
+    public static double kCollisionVel 			= 24;
+    public static double kCollisionAccelTime = 0.5;	// sec to reach max velocity
+    public static double kCollisionAccel 		= kCollisionVel / kCollisionAccelTime;
+    public static double kCollisionJerkThreshold 	= 0.9;		// maximum JerkY was 0.9 for a 24 inch/sec collision into wall (<0.1 when driving normal)
+    public static double kCollisionCurrentThreshold = 20;		// threshold to detect stall current
+    
+
     public CollisionDetectionAction() 
     {
     	gyro = NavX.getInstance();
@@ -54,12 +60,12 @@ public class CollisionDetectionAction implements Action
         //System.out.println(this.toString());  
        
         boolean collisionDetected = false;
-        if ( ( Math.abs(jerkX) > Constants.kCollisionJerkThreshold ) || ( Math.abs(jerkY) > Constants.kCollisionJerkThreshold) )
+        if ( ( Math.abs(jerkX) > kCollisionJerkThreshold ) || ( Math.abs(jerkY) > kCollisionJerkThreshold) )
         	collisionDetected = true;
         
         lMotorCurrent = DriveState.getInstance().getLeftMotorCurrent();
         rMotorCurrent = DriveState.getInstance().getRightMotorCurrent();
-        if ( ( lMotorCurrent > Constants.kCollisionCurrentThreshold ) || ( rMotorCurrent > Constants.kCollisionCurrentThreshold) )
+        if ( ( lMotorCurrent > kCollisionCurrentThreshold ) || ( rMotorCurrent > kCollisionCurrentThreshold) )
         	collisionDetected = true;
         
     	return collisionDetected;
@@ -76,7 +82,7 @@ public class CollisionDetectionAction implements Action
 
     public String toString()
     {
-    	return String.format("Collision Detection -- JerkX: % 5.3f, JerkY: % 5.3f, JerkThresh: %4.1f, lMotorCurrent: % 5.3f, rMotorCurrent: % 5.3f, CurrentThresh: %4.1f, ", jerkX, jerkY, Constants.kCollisionJerkThreshold, lMotorCurrent, rMotorCurrent, Constants.kCollisionCurrentThreshold);
+    	return String.format("Collision Detection -- JerkX: % 5.3f, JerkY: % 5.3f, JerkThresh: %4.1f, lMotorCurrent: % 5.3f, rMotorCurrent: % 5.3f, CurrentThresh: %4.1f, ", jerkX, jerkY, kCollisionJerkThreshold, lMotorCurrent, rMotorCurrent, kCollisionCurrentThreshold);
     }
     
     
@@ -88,10 +94,10 @@ public class CollisionDetectionAction implements Action
     		put("AutoAction/AutoAction", "CollisionDetectionAction" );
    			put("CollisionDetectionAction/JerkX", jerkX );
    			put("CollisionDetectionAction/JerkY", jerkY );
-   			put("CollisionDetectionAction/JerkThresh", Constants.kCollisionJerkThreshold );
+   			put("CollisionDetectionAction/JerkThresh", kCollisionJerkThreshold );
    			put("CollisionDetectionAction/lMotorCurrent", jerkX );
    			put("CollisionDetectionAction/rMotorCurrent", jerkY );
-   			put("CollisionDetectionAction/CurrentThresh", Constants.kCollisionCurrentThreshold );
+   			put("CollisionDetectionAction/CurrentThresh", kCollisionCurrentThreshold );
         }
     };
      

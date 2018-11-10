@@ -1,14 +1,15 @@
 package org.usfirst.frc.team686.robot.lib.util;
 
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.Timer;
-
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 import org.usfirst.frc.team686.robot.command_status.RobotState;
 import org.usfirst.frc.team686.robot.command_status.VisionStatus;
 import org.usfirst.frc.team686.robot.lib.util.Kinematics.WheelSpeed;
+import org.usfirst.frc.team686.robot.loops.DriveLoop;
 import org.usfirst.frc.team686.robot.subsystems.Drive;
+
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Timer;
 
 
 /**
@@ -287,7 +288,7 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
     	boolean done = false;
     	
     	if (state == PathVisionState.PATH_FOLLOWING)
-	        done = (remainingDistance <= Constants.kPathFollowingCompletionTolerance);
+	        done = (remainingDistance <= DriveLoop.kPathFollowingCompletionTolerance);
     	else
     		done = (remainingDistance <= Constants.kVisionCompletionTolerance);
     	

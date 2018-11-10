@@ -1,6 +1,6 @@
 package org.usfirst.frc.team686.robot.lib.util;
 
-import org.usfirst.frc.team686.robot.Constants;
+import org.usfirst.frc.team686.robot.loops.DriveLoop;
 
 /**
  * Provides forward and inverse kinematics equations for the robot modeling the
@@ -74,7 +74,7 @@ public class Kinematics
     {
     	double linearSpeed = (_lSpeed + _rSpeed)/2;		// linear speed of center of robot is the average of the left and right
     	double dSpeed  = (_rSpeed - _lSpeed)/2;			// differential speed of wheels (positive: turning to left, increasing theta)
-    	double angularSpeed = dSpeed * 2 * Constants.kTrackScrubFactor / Constants.kTrackEffectiveDiameter;		// angular velocity (in rad/sec) due to differential speed
+    	double angularSpeed = dSpeed * 2 * DriveLoop.kTrackScrubFactor / DriveLoop.kTrackEffectiveDiameter;		// angular velocity (in rad/sec) due to differential speed
         return new LinearAngularSpeed(linearSpeed, angularSpeed);			
     }
     
@@ -148,7 +148,7 @@ public class Kinematics
     
     public static WheelSpeed inverseKinematics(double _linearSpeed, double _angularSpeed) 
     {
-        double dSpeed = _angularSpeed * Constants.kTrackEffectiveDiameter / (2 * Constants.kTrackScrubFactor);
+        double dSpeed = _angularSpeed * DriveLoop.kTrackEffectiveDiameter / (2 * DriveLoop.kTrackScrubFactor);
         return new WheelSpeed(_linearSpeed - dSpeed, _linearSpeed + dSpeed); 
     }
 }

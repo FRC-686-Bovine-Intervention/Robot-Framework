@@ -43,6 +43,71 @@ public class DriveLoop implements Loop
 	private static final int kVelocityControlSlot = 0;
 	private static final int kBaseLockControlSlot = 1;
 
+
+	// Wheels
+	public static double kDriveWheelCircumInches    = 18.800;
+	public static double kDriveWheelDiameterInches  = 11.500;
+	public static double kTrackLengthInches         = 21.500;
+	public static double kTrackWidthInches          = kDriveWheelCircumInches / Math.PI;
+	public static double kTrackEffectiveDiameter    = (kTrackWidthInches * kTrackWidthInches + kTrackLengthInches * kTrackLengthInches) / kTrackWidthInches;;
+	public static double kTrackScrubFactor          = 0.5;
+
+	// Wheel Encoder
+	public static double kQuadEncoderGain  = 1.0;	// number of drive shaft rotations per encoder shaft rotation
+													// 1.0 if encoder is directly coupled to the drive shaft
+	public static int    kQuadEncoderCodesPerRev    = 64;
+	public static int    kQuadEncoderUnitsPerRev    = (int)(4*kQuadEncoderCodesPerRev / kQuadEncoderGain);  ;
+	public static double kQuadEncoderStatusFramePeriod = 0.100;	// 100 ms
+
+	// CONTROL LOOP GAINS   
+	public static double kDriveSecondsFromNeutralToFull = 0.375;		// decrease acceleration (reduces current, robot tipping)
+	public static double kNominalEncoderPulsePer100ms = 85;		// velocity at a nominal throttle (measured using NI web interface)
+	public static double kNominalPercentOutput 		 = 0.4447;	// percent output of motor at above throttle (using NI web interface)
+
+    // PID gains for drive velocity loop (sent to Talon)
+    // Units: error is 4*256 counts/rev. Max output is +/- 1023 units.
+    public static double kDriveVelocityKp = 20.0;
+    public static double kDriveVelocityKi = 0.01;
+    public static double kDriveVelocityKd = 70.0;
+    public static double kDriveVelocityKf = kNominalPercentOutput * 1023.0 / kNominalEncoderPulsePer100ms;
+    public static int    kDriveVelocityIZone = 0;
+    public static double kDriveVelocityRampRate = 0.375;
+    public static int    kDriveVelocityAllowableError = 0;
+
+    // PID gains for drive base lock loop
+    // Units: error is 4*256 counts/rev. Max output is +/- 1023 units.
+    public static double kDriveBaseLockKp = 0.5;
+    public static double kDriveBaseLockKi = 0;
+    public static double kDriveBaseLockKd = 0;
+    public static double kDriveBaseLockKf = 0;
+    public static int    kDriveBaseLockIZone = 0;
+    public static double kDriveBaseLockRampRate = 0;
+    public static int    kDriveBaseLockAllowableError = 10;
+
+    // PID gains for constant heading velocity control
+    // Units: Error is degrees. Output is inches/second difference to
+    // left/right.
+    public static double kDriveHeadingVelocityKp = 4.0;
+    public static double kDriveHeadingVelocityKi = 0.0;
+    public static double kDriveHeadingVelocityKd = 50.0;
+    
+    // Point Turn constants
+    public static double kPointTurnKp = 0.05;
+    public static double kPointTurnKd = 0.50;
+    public static double kPointTurnKi = 0.00;
+    public static double kPointTurnKf = 0.00;
+    public static double kPointTurnCompletionToleranceDeg = 3.0;
+    public static double kPointTurnMaxOutput = 0.7; 
+    
+    // Path following constants
+    public static double kPathFollowingMaxVel    = 72.0; // inches/sec  		
+    public static double kPathFollowingAccelTime = 0.5;		// sec to reach max velocity
+    public static double kPathFollowingMaxAccel  = kPathFollowingMaxVel / kPathFollowingAccelTime; // inches/sec^2
+    public static double kPathFollowingLookahead = 24.0; // inches
+    public static double kPathFollowingCompletionTolerance = 4.0; 
+
+
+
 	private DriveLoop() 
 	{
 		drive = Drive.getInstance();
@@ -64,8 +129,8 @@ public class DriveLoop implements Loop
 		lMotorMaster.setNeutralMode(NeutralMode.Coast);
 		rMotorMaster.setNeutralMode(NeutralMode.Coast);
 
-		lMotorMaster.configOpenloopRamp(Constants.kDriveSecondsFromNeutralToFull, Constants.kTalonTimeoutMs);		
-		rMotorMaster.configOpenloopRamp(Constants.kDriveSecondsFromNeutralToFull, Constants.kTalonTimeoutMs);		
+		lMotorMaster.configOpenloopRamp(kDriveSecondsFromNeutralToFull, Constants.kTalonTimeoutMs);		
+		rMotorMaster.configOpenloopRamp(kDriveSecondsFromNeutralToFull, Constants.kTalonTimeoutMs);		
 		
 		// Set up the encoders
 		lMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	// configure for closed-loop PID
@@ -76,40 +141,40 @@ public class DriveLoop implements Loop
 		rMotorMaster.setInverted(Constants.kRightMotorInverted);
 		
 		// Load velocity control gains
-		lMotorMaster.config_kF(kVelocityControlSlot, Constants.kDriveVelocityKf, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_kP(kVelocityControlSlot, Constants.kDriveVelocityKp, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_kI(kVelocityControlSlot, Constants.kDriveVelocityKi, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_kD(kVelocityControlSlot, Constants.kDriveVelocityKd, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_IntegralZone(kVelocityControlSlot, Constants.kDriveVelocityIZone, Constants.kTalonTimeoutMs);
+		lMotorMaster.config_kF(kVelocityControlSlot, kDriveVelocityKf, Constants.kTalonTimeoutMs);
+		lMotorMaster.config_kP(kVelocityControlSlot, kDriveVelocityKp, Constants.kTalonTimeoutMs);
+		lMotorMaster.config_kI(kVelocityControlSlot, kDriveVelocityKi, Constants.kTalonTimeoutMs);
+		lMotorMaster.config_kD(kVelocityControlSlot, kDriveVelocityKd, Constants.kTalonTimeoutMs);
+		lMotorMaster.config_IntegralZone(kVelocityControlSlot, kDriveVelocityIZone, Constants.kTalonTimeoutMs);
 
-		rMotorMaster.config_kF(kVelocityControlSlot, Constants.kDriveVelocityKf, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_kP(kVelocityControlSlot, Constants.kDriveVelocityKp, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_kI(kVelocityControlSlot, Constants.kDriveVelocityKi, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_kD(kVelocityControlSlot, Constants.kDriveVelocityKd, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_IntegralZone(kVelocityControlSlot, Constants.kDriveVelocityIZone, Constants.kTalonTimeoutMs);
+		rMotorMaster.config_kF(kVelocityControlSlot, kDriveVelocityKf, Constants.kTalonTimeoutMs);
+		rMotorMaster.config_kP(kVelocityControlSlot, kDriveVelocityKp, Constants.kTalonTimeoutMs);
+		rMotorMaster.config_kI(kVelocityControlSlot, kDriveVelocityKi, Constants.kTalonTimeoutMs);
+		rMotorMaster.config_kD(kVelocityControlSlot, kDriveVelocityKd, Constants.kTalonTimeoutMs);
+		rMotorMaster.config_IntegralZone(kVelocityControlSlot, kDriveVelocityIZone, Constants.kTalonTimeoutMs);
 		
-		lMotorMaster.configAllowableClosedloopError(kVelocityControlSlot, Constants.kDriveVelocityAllowableError, Constants.kTalonTimeoutMs);
-		rMotorMaster.configAllowableClosedloopError(kVelocityControlSlot, Constants.kDriveVelocityAllowableError, Constants.kTalonTimeoutMs);
+		lMotorMaster.configAllowableClosedloopError(kVelocityControlSlot, kDriveVelocityAllowableError, Constants.kTalonTimeoutMs);
+		rMotorMaster.configAllowableClosedloopError(kVelocityControlSlot, kDriveVelocityAllowableError, Constants.kTalonTimeoutMs);
 
 		
 		// Load base lock control gains
-		lMotorMaster.config_kF(kBaseLockControlSlot, Constants.kDriveBaseLockKf, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_kP(kBaseLockControlSlot, Constants.kDriveBaseLockKp, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_kI(kBaseLockControlSlot, Constants.kDriveBaseLockKi, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_kD(kBaseLockControlSlot, Constants.kDriveBaseLockKd, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_IntegralZone(kBaseLockControlSlot, Constants.kDriveBaseLockIZone, Constants.kTalonTimeoutMs);
+		lMotorMaster.config_kF(kBaseLockControlSlot, kDriveBaseLockKf, Constants.kTalonTimeoutMs);
+		lMotorMaster.config_kP(kBaseLockControlSlot, kDriveBaseLockKp, Constants.kTalonTimeoutMs);
+		lMotorMaster.config_kI(kBaseLockControlSlot, kDriveBaseLockKi, Constants.kTalonTimeoutMs);
+		lMotorMaster.config_kD(kBaseLockControlSlot, kDriveBaseLockKd, Constants.kTalonTimeoutMs);
+		lMotorMaster.config_IntegralZone(kBaseLockControlSlot, kDriveBaseLockIZone, Constants.kTalonTimeoutMs);
 
-		rMotorMaster.config_kF(kBaseLockControlSlot, Constants.kDriveBaseLockKf, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_kP(kBaseLockControlSlot, Constants.kDriveBaseLockKp, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_kI(kBaseLockControlSlot, Constants.kDriveBaseLockKi, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_kD(kBaseLockControlSlot, Constants.kDriveBaseLockKd, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_IntegralZone(kBaseLockControlSlot, Constants.kDriveBaseLockIZone, Constants.kTalonTimeoutMs);
+		rMotorMaster.config_kF(kBaseLockControlSlot, kDriveBaseLockKf, Constants.kTalonTimeoutMs);
+		rMotorMaster.config_kP(kBaseLockControlSlot, kDriveBaseLockKp, Constants.kTalonTimeoutMs);
+		rMotorMaster.config_kI(kBaseLockControlSlot, kDriveBaseLockKi, Constants.kTalonTimeoutMs);
+		rMotorMaster.config_kD(kBaseLockControlSlot, kDriveBaseLockKd, Constants.kTalonTimeoutMs);
+		rMotorMaster.config_IntegralZone(kBaseLockControlSlot, kDriveBaseLockIZone, Constants.kTalonTimeoutMs);
 
-		lMotorMaster.configAllowableClosedloopError(kBaseLockControlSlot, Constants.kDriveBaseLockAllowableError, Constants.kTalonTimeoutMs);
-		rMotorMaster.configAllowableClosedloopError(kBaseLockControlSlot, Constants.kDriveBaseLockAllowableError, Constants.kTalonTimeoutMs);
+		lMotorMaster.configAllowableClosedloopError(kBaseLockControlSlot, kDriveBaseLockAllowableError, Constants.kTalonTimeoutMs);
+		rMotorMaster.configAllowableClosedloopError(kBaseLockControlSlot, kDriveBaseLockAllowableError, Constants.kTalonTimeoutMs);
 		
-		lMotorMaster.configOpenloopRamp(Constants.kDriveVelocityRampRate, 0);
-		rMotorMaster.configOpenloopRamp(Constants.kDriveVelocityRampRate, 0);
+		lMotorMaster.configOpenloopRamp(kDriveVelocityRampRate, 0);
+		rMotorMaster.configOpenloopRamp(kDriveVelocityRampRate, 0);
 
 		/*****************************************************************
 		 * Configure Slave Motor Controllers
@@ -347,12 +412,12 @@ public class DriveLoop implements Loop
 	}
 
 	// Talon SRX reports position in rotations while in closed-loop Position mode
-	private static double encoderUnitsToInches(int _encoderPosition) {	return (double)_encoderPosition / (double)Constants.kQuadEncoderUnitsPerRev  * Constants.kDriveWheelCircumInches; }
-	private static int inchesToEncoderUnits(double _inches) { return (int)(_inches / Constants.kDriveWheelCircumInches * Constants.kQuadEncoderUnitsPerRev); }
+	private static double encoderUnitsToInches(int _encoderPosition) {	return (double)_encoderPosition / (double)kQuadEncoderUnitsPerRev  * kDriveWheelCircumInches; }
+	private static int inchesToEncoderUnits(double _inches) { return (int)(_inches / kDriveWheelCircumInches * kQuadEncoderUnitsPerRev); }
 
 	// Talon SRX reports speed in RPM while in closed-loop Speed mode
-	private static double encoderUnitsPerFrameToInchesPerSecond(int _encoderEdgesPerFrame) { return encoderUnitsToInches(_encoderEdgesPerFrame) / Constants.kQuadEncoderStatusFramePeriod; }
-	private static int inchesPerSecondToEncoderUnitsPerFrame(double _inchesPerSecond) { return (int)(inchesToEncoderUnits(_inchesPerSecond) * Constants.kQuadEncoderStatusFramePeriod); }
+	private static double encoderUnitsPerFrameToInchesPerSecond(int _encoderEdgesPerFrame) { return encoderUnitsToInches(_encoderEdgesPerFrame) / kQuadEncoderStatusFramePeriod; }
+	private static int inchesPerSecondToEncoderUnitsPerFrame(double _inchesPerSecond) { return (int)(inchesToEncoderUnits(_inchesPerSecond) * kQuadEncoderStatusFramePeriod); }
 
 	
 	

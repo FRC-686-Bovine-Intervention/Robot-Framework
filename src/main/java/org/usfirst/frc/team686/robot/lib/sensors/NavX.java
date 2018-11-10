@@ -2,6 +2,7 @@ package org.usfirst.frc.team686.robot.lib.sensors;
 
 import org.usfirst.frc.team686.robot.Constants;
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SPI;
 
 public class NavX extends GyroBase
 {
@@ -10,10 +11,16 @@ public class NavX extends GyroBase
 	
 	 AHRS ahrs;
 	
+    // The SPI port the NavX is connected to
+    // (see https://www.pdocs.kauailabs.com/navx-mxp/guidance/selecting-an-interface/)
+    public static final SPI.Port NAVX_PORT = SPI.Port.kMXP;						// the SPI port has low latency (<0.1 ms)
+	public static byte NAVX_UPDATE_RATE = (byte) (1.0 / Constants.kLoopDt);		// the SPI port supports update rates from 4-200 Hz
+	 
+	 
     // constructors
     public NavX() 
     {
-    	ahrs = new AHRS(Constants.NAVX_PORT, Constants.NAVX_UPDATE_RATE);
+    	ahrs = new AHRS(NAVX_PORT, NAVX_UPDATE_RATE);
     }
 	
 	/**

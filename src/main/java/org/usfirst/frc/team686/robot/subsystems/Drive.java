@@ -1,14 +1,13 @@
 package org.usfirst.frc.team686.robot.subsystems;
 
+import org.usfirst.frc.team686.robot.command_status.DriveCommand;
+import org.usfirst.frc.team686.robot.command_status.DriveCommand.DriveControlMode;
+import org.usfirst.frc.team686.robot.command_status.DriveState;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.lib.util.Kinematics.WheelSpeed;
-import org.usfirst.frc.team686.robot.loops.Loop;
 import org.usfirst.frc.team686.robot.lib.util.PIDController;
-
-import org.usfirst.frc.team686.robot.Constants;
-import org.usfirst.frc.team686.robot.command_status.DriveCommand;
-import org.usfirst.frc.team686.robot.command_status.DriveState;
-import org.usfirst.frc.team686.robot.command_status.DriveCommand.DriveControlMode;
+import org.usfirst.frc.team686.robot.loops.DriveLoop;
+import org.usfirst.frc.team686.robot.loops.Loop;
 
 /**
  * The robot's drivetrain, which implements the Superstructure abstract class.
@@ -27,19 +26,22 @@ public class Drive extends Subsystem
 	private DriveCommand driveCmd;
 
 	// drive status
-	public DriveState DriveState;
+	public DriveState driveState;
 	
 	// velocity heading
 	private VelocityHeadingSetpoint velocityHeadingSetpoint = new VelocityHeadingSetpoint();
 
-	
+
+
+
+
 
 	// The constructor instantiates all of the drivetrain components when the
 	// robot powers up
 	private Drive() 
 	{
 		driveCmd = DriveCommand.COAST();	
-		DriveState = DriveState.getInstance();
+		driveState = DriveState.getInstance();
 	}
 
 	
@@ -159,7 +161,7 @@ public class Drive extends Subsystem
 			speed = _speed;
 			headingSetpointDeg = _headingSetpointDeg;
 			
-			velocityHeadingPID = new PIDController(Constants.kDriveHeadingVelocityKp, Constants.kDriveHeadingVelocityKi, Constants.kDriveHeadingVelocityKd);
+			velocityHeadingPID = new PIDController(DriveLoop.kDriveHeadingVelocityKp, DriveLoop.kDriveHeadingVelocityKi, DriveLoop.kDriveHeadingVelocityKd);
 			velocityHeadingPID.setOutputRange(-30, 30);
 			
 			velocityHeadingPID.setSetpoint(headingSetpointDeg);
@@ -179,7 +181,7 @@ public class Drive extends Subsystem
 	private void updateVelocityHeading() 
 	{
 		// get change in left/right motor speeds based on error in heading
-		double diffSpeed = velocityHeadingSetpoint.velocityHeadingPID.calculate( DriveState.getHeadingDeg() );
+		double diffSpeed = velocityHeadingSetpoint.velocityHeadingPID.calculate( driveState.getHeadingDeg() );
 		
 		// speed up   left side when robot turns left (actual heading > heading setpoint --> diffSpeed < 0) 
 		// slow down right side when robot turns left (actual heading > heading setpoint --> diffSpeed < 0) 
@@ -209,8 +211,8 @@ public class Drive extends Subsystem
 	// test function -- rotates wheels 1 RPM
 	public void testDriveSpeedControl() 
 	{
-		double  left_inches_per_second = Constants.kDriveWheelCircumInches;
-		double right_inches_per_second = Constants.kDriveWheelCircumInches;
+		double  left_inches_per_second = DriveLoop.kDriveWheelCircumInches;
+		double right_inches_per_second = DriveLoop.kDriveWheelCircumInches;
 		setVelocitySetpoint(left_inches_per_second, right_inches_per_second);
 	}
 

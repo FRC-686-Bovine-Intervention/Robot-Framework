@@ -37,8 +37,8 @@ public class SwitchableCameraServer
 	private String _previousCameraName;
 	private String _gearCameraName;
 	private String _climberCameraName;
-	private String _shooterCameraName;
-	private String _driverCameraName;
+	// private String _shooterCameraName;
+	// private String _driverCameraName;
 	
 	private boolean _isCam0Present;
 	private boolean _isCam1Present;
@@ -174,15 +174,15 @@ public class SwitchableCameraServer
 		_climberCameraName = cameraname;
 	}
 	
-	public void setShooterCameraName(String cameraname)
-	{
-		_shooterCameraName = cameraname;
-	}
+	// public void setShooterCameraName(String cameraname)
+	// {
+	// 	_shooterCameraName = cameraname;
+	// }
 	
-	public void setDriverCameraName(String cameraname)
-	{
-		_driverCameraName = cameraname;
-	}
+	// public void setDriverCameraName(String cameraname)
+	// {
+	// 	_driverCameraName = cameraname;
+	// }
 	
 	//============================================================================================
 	// Task that is run on a separate thread

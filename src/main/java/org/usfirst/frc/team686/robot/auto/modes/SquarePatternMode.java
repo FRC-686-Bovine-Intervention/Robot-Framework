@@ -1,13 +1,13 @@
 package org.usfirst.frc.team686.robot.auto.modes;
 
-import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
 import org.usfirst.frc.team686.robot.auto.actions.PathFollowerAction;
 import org.usfirst.frc.team686.robot.lib.util.Path;
+import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 import org.usfirst.frc.team686.robot.lib.util.PathSegment;
 import org.usfirst.frc.team686.robot.lib.util.Vector2d;
-import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
+import org.usfirst.frc.team686.robot.loops.DriveLoop;
 
 /**
  * Go over the defenses in the starting configuration, then launch one ball (in
@@ -23,7 +23,7 @@ public class SquarePatternMode extends AutoModeBase {
     
     private void init(){
     	
-    	PathSegment.Options options = new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);
+    	PathSegment.Options options = new PathSegment.Options(DriveLoop.kPathFollowingMaxVel, DriveLoop.kPathFollowingMaxAccel, DriveLoop.kPathFollowingLookahead, false);
     	
     	path = new Path();
     	path.add(new Waypoint(new Vector2d( 0, 0), options));

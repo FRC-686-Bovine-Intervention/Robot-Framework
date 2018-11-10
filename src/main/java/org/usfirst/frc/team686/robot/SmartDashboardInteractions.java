@@ -137,9 +137,6 @@ public class SmartDashboardInteractions
     		gameData = DriverStation.getInstance().getGameSpecificMessage(); 
     	}
     	
-    	StartDelayOption startDelay = startDelayChooser.getSelected();
-    	StartPositionOption startPose = (StartPositionOption)startChooser.getSelected();
-    	
     	switch(autoMode)
     	{
     	case STAND_STILL:
