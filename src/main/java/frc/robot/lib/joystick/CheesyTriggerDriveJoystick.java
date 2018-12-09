@@ -14,12 +14,15 @@ import frc.robot.command_status.DriveCommand;
  */
 public class CheesyTriggerDriveJoystick extends JoystickControlsBase 
 {
-    private static JoystickControlsBase mInstance = new CheesyTriggerDriveJoystick();
-
-    public static JoystickControlsBase getInstance() 
-    {
-        return mInstance;
-    }
+  	// singleton class
+      private static JoystickControlsBase instance = null;
+      public static JoystickControlsBase getInstance() 
+      { 
+              if (instance == null) {
+                      instance = new CheesyTriggerDriveJoystick();
+              }
+              return instance;
+      }
 
     double mQuickStopAccumulator;
     public static final double kThrottleDeadband = 0.02;

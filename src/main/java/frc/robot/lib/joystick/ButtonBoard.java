@@ -7,8 +7,15 @@ import edu.wpi.first.wpilibj.Joystick;
  */
 public class ButtonBoard 
 {
-    private static ButtonBoard mInstance = new ButtonBoard();
-    public static ButtonBoard getInstance() { return mInstance; }
+ 	// singleton class
+	 private static ButtonBoard instance = null;
+	 public static ButtonBoard getInstance() 
+	 { 
+			 if (instance == null) {
+					 instance = new ButtonBoard();
+			 }
+			 return instance;
+	 }
 
     protected final Joystick mStick;
 

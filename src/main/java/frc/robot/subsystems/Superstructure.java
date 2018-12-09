@@ -4,8 +4,15 @@ import frc.robot.lib.util.DataLogger;
 
 public class Superstructure extends Subsystem {
 	
-	private static Superstructure instance = new Superstructure();
-	public static Superstructure getInstance() { return instance; }
+ 	// singleton class
+	 private static Superstructure instance = null;
+	 public static Superstructure getInstance() 
+	 { 
+		 if (instance == null) {
+			 instance = new Superstructure();
+		 }
+		 return instance;
+	 }
 	
 	private Superstructure()
 	{

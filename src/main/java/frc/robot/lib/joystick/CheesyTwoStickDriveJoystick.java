@@ -14,11 +14,14 @@ import frc.robot.command_status.DriveCommand;
  */
 public class CheesyTwoStickDriveJoystick extends JoystickControlsBase 
 {
-    private static JoystickControlsBase mInstance = new CheesyTwoStickDriveJoystick();
-
-    public static JoystickControlsBase getInstance() 
-    {
-        return mInstance;
+    // singleton class
+     private static JoystickControlsBase instance = null;
+     public static JoystickControlsBase getInstance() 
+     { 
+        if (instance == null) {
+            instance = new CheesyTwoStickDriveJoystick();
+            }
+        return instance;
     }
 
     double mQuickStopAccumulator;

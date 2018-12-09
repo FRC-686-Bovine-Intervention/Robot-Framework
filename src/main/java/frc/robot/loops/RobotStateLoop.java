@@ -13,8 +13,15 @@ import edu.wpi.first.wpilibj.Timer;
  */
 public class RobotStateLoop implements Loop 
 {
-    static RobotStateLoop instance = new RobotStateLoop();
-    public static RobotStateLoop getInstance() { return instance; }
+ 	// singleton class
+	 private static RobotStateLoop instance = null;
+	 public static RobotStateLoop getInstance() 
+	 { 
+		 if (instance == null) {
+			 instance = new RobotStateLoop();
+		 }
+		 return instance;
+	 }
 
     RobotState robotState;
     DriveState driveState;

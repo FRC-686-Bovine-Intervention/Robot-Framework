@@ -10,12 +10,15 @@ import frc.robot.command_status.DriveCommand;
  */
 public class TriggerDriveJoystick extends JoystickControlsBase 
 {
-    private static JoystickControlsBase mInstance = new TriggerDriveJoystick();
-
-    public static JoystickControlsBase getInstance() 
-    {
-        return mInstance;
-    }
+ 	// singleton class
+	 private static JoystickControlsBase instance = null;
+	 public static JoystickControlsBase getInstance() 
+	 { 
+			 if (instance == null) {
+					 instance = new TriggerDriveJoystick();
+			 }
+			 return instance;
+	 }
 
     
     public DriveCommand getDriveCommand()

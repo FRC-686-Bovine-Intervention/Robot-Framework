@@ -49,8 +49,15 @@ import frc.robot.lib.util.Pose;
 
 public class RobotState 
 {
-    private static RobotState instance = new RobotState();
-    public static RobotState getInstance() { return instance; }
+	// singleton class
+	private static RobotState instance = null;
+	public static RobotState getInstance() 
+	{ 
+		if (instance == null) {
+			instance = new RobotState();
+		}
+		return instance;
+	}
 
     public static final int kObservationBufferSize = 100;
     public static final double kMaxTargetAge = 0.4;

@@ -9,8 +9,15 @@ import com.ctre.phoenix.motorcontrol.*;
  */
 public class DriveState
 {
-	private static DriveState instance = new DriveState();
-	public static DriveState getInstance() { return instance; }	
+	// singleton class
+	private static DriveState instance = null;
+	public static DriveState getInstance() 
+	{ 
+		if (instance == null) {
+			instance = new DriveState();
+		}
+		return instance;
+	}
 	
 	// all member variables should be private to force other object to use the set/get access methods
 	// which are synchronized to allow multi-thread synchronization

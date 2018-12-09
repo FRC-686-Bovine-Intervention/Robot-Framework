@@ -1,6 +1,7 @@
 package frc.robot.auto.actions;
 
 import frc.robot.command_status.DriveState;
+import frc.robot.lib.sensors.GyroBase;
 import frc.robot.lib.sensors.NavX;
 import frc.robot.lib.util.DataLogger;
 

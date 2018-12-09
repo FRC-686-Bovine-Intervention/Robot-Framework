@@ -1,23 +1,6 @@
 package frc.robot;
 
-import frc.robot.auto.*;
-import frc.robot.command_status.DriveState;
-import frc.robot.command_status.RobotState;
-import frc.robot.lib.joystick.ArcadeDriveJoystick;
-import frc.robot.lib.joystick.JoystickControlsBase;
-import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Superstructure;
-import frc.robot.lib.util.DataLogger;
-import frc.robot.command_status.DriveCommand;
-
 import java.util.TimeZone;
-
-import frc.robot.lib.util.CrashTracker;
-import frc.robot.lib.util.DataLogController;
-import frc.robot.lib.util.Pose;
-import frc.robot.loops.DriveLoop;
-import frc.robot.loops.LoopController;
-import frc.robot.loops.RobotStateLoop;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -25,21 +8,36 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 
+import frc.robot.auto.AutoModeExecuter;
+import frc.robot.command_status.DriveCommand;
+import frc.robot.command_status.DriveState;
+import frc.robot.command_status.RobotState;
+import frc.robot.lib.joystick.ArcadeDriveJoystick;
+import frc.robot.lib.joystick.JoystickControlsBase;
+import frc.robot.lib.util.CrashTracker;
+import frc.robot.lib.util.DataLogController;
+import frc.robot.lib.util.DataLogger;
+import frc.robot.lib.util.Pose;
+import frc.robot.loops.DriveLoop;
+import frc.robot.loops.LoopController;
+import frc.robot.loops.RobotStateLoop;
+import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Superstructure;
 
 public class Robot extends IterativeRobot {
-	
+
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
-	
+
 	JoystickControlsBase controls = ArcadeDriveJoystick.getInstance();
 
 	RobotState robotState = RobotState.getInstance();
 	Drive drive = Drive.getInstance();
 	Superstructure superStructure = Superstructure.getInstance();
-	
+
 	AutoModeExecuter autoModeExecuter = null;
-	
+
 	LoopController loopController;
-	
+
 	SmartDashboardInteractions smartDashboardInteractions;
 	DataLogController robotLogger;
 

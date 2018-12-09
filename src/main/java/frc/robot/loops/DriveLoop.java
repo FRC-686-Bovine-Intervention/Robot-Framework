@@ -3,19 +3,23 @@ package frc.robot.loops;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.ctre.phoenix.motorcontrol.*;
 
 import edu.wpi.first.wpilibj.Timer;
 
-import frc.robot.lib.sensors.GyroBase;
-import frc.robot.lib.sensors.BNO055;
-import frc.robot.lib.sensors.NavX;
 import frc.robot.Constants;
 import frc.robot.command_status.DriveCommand;
 import frc.robot.command_status.DriveState;
+import frc.robot.lib.sensors.BNO055;
+import frc.robot.lib.sensors.GyroBase;
+import frc.robot.lib.sensors.NavX;
 import frc.robot.subsystems.Drive;
 
 /*
@@ -28,9 +32,16 @@ import frc.robot.subsystems.Drive;
 
 public class DriveLoop implements Loop 
 {
-	private static DriveLoop instance = new DriveLoop();
-	public static DriveLoop getInstance() { return instance; }
-	
+ 	// singleton class
+	 private static DriveLoop instance = null;
+	 public static DriveLoop getInstance() 
+	 { 
+		 if (instance == null) {
+			 instance = new DriveLoop();
+		 }
+		 return instance;
+	 }
+	 
     private static Drive drive;
 	private static GyroBase gyro;
     private DriveState driveState;
@@ -111,6 +122,9 @@ public class DriveLoop implements Loop
 	private DriveLoop() 
 	{
 		drive = Drive.getInstance();
+//DEBUG
+System.out.println(drive.toString());
+
 
 		driveState = DriveState.getInstance();
 		

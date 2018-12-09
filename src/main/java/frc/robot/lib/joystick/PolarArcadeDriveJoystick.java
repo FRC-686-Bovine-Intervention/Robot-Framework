@@ -9,12 +9,15 @@ import frc.robot.command_status.DriveCommand;
  */
 public class PolarArcadeDriveJoystick extends JoystickControlsBase 
 {
-    private static JoystickControlsBase mInstance = new PolarArcadeDriveJoystick();
-
-    public static JoystickControlsBase getInstance() 
-    {
-        return mInstance;
-    }
+    // singleton class
+		private static JoystickControlsBase instance = null;
+		public static JoystickControlsBase getInstance() 
+		{ 
+			 if (instance == null) {
+					 instance = new PolarArcadeDriveJoystick();
+					 }
+			 return instance;
+	 }
 
     
     public DriveCommand getDriveCommand()

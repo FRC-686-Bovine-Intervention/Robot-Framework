@@ -9,13 +9,16 @@ import frc.robot.command_status.DriveCommand;
  */
 public class TankDriveJoystick extends JoystickControlsBase 
 {
-    private static JoystickControlsBase mInstance = new TankDriveJoystick();
-
-    public static JoystickControlsBase getInstance() 
-    {
-        return mInstance;
-    }
-
+  	// singleton class
+      private static JoystickControlsBase instance = null;
+      public static JoystickControlsBase getInstance() 
+      { 
+              if (instance == null) {
+                      instance = new TankDriveJoystick();
+              }
+              return instance;
+      }
+ 
     
     public DriveCommand getDriveCommand()
     {

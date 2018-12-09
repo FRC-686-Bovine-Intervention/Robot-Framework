@@ -6,8 +6,15 @@ import edu.wpi.first.wpilibj.SPI;
 
 public class NavX extends GyroBase
 {
-	private static NavX instance = new NavX();
-	public static NavX getInstance() { return instance; }
+ 	// singleton class
+	private static NavX instance = null;
+	public static NavX getInstance() 
+	{ 
+		if (instance == null) {
+			instance = new NavX();
+		}
+		return instance;
+	}
 	
 	 AHRS ahrs;
 	

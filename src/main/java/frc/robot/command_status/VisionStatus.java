@@ -4,8 +4,15 @@ import frc.robot.lib.util.DataLogger;
 
 public class VisionStatus
 {
-	private static VisionStatus instance = new VisionStatus();
-	public static VisionStatus getInstance() { return instance; }
+	// singleton class
+	private static VisionStatus instance = null;
+	public static VisionStatus getInstance() 
+	{ 
+		if (instance == null) {
+			instance = new VisionStatus();
+		}
+		return instance;
+	}
 
 	private double imageTimestamp;
 
