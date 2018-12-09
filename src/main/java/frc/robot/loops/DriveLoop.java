@@ -122,10 +122,6 @@ public class DriveLoop implements Loop
 	private DriveLoop() 
 	{
 		drive = Drive.getInstance();
-//DEBUG
-System.out.println(drive.toString());
-
-
 		driveState = DriveState.getInstance();
 		
 		/*****************************************************************
