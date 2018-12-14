@@ -12,15 +12,15 @@ import frc.robot.loops.LoopController;
  */
 public class SubsystemManager implements ILooper
 {
-
     private final List<Subsystem> mAllSubsystems;
     private List<Loop> mLoops = new ArrayList<>();
-
+    
     public SubsystemManager(List<Subsystem> allSubsystems)
     {
         mAllSubsystems = allSubsystems;
     }
-
+    
+    /*
     public void outputToSmartDashboard()
     {
         mAllSubsystems.forEach((s) -> s.outputTelemetry());
@@ -122,6 +122,7 @@ public class SubsystemManager implements ILooper
         // no subsystems are registered with the enabledLooper
         disabledLooper.register(new DisabledLoop());
     }
+*/
 
     @Override
     public void register(Loop loop)
