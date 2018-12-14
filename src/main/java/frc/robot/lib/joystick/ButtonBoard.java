@@ -5,29 +5,34 @@ import edu.wpi.first.wpilibj.Joystick;
 /**
  * An abstract class that forms the base of joystick controls.
  */
-public class ButtonBoard 
+public class ButtonBoard
 {
- 	// singleton class
-	 private static ButtonBoard instance = null;
-	 public static ButtonBoard getInstance() 
-	 { 
-			 if (instance == null) {
-					 instance = new ButtonBoard();
-			 }
-			 return instance;
-	 }
+	// singleton class
+	private static ButtonBoard instance = null;
 
-    protected final Joystick mStick;
+	public static ButtonBoard getInstance()
+	{
+		if (instance == null)
+		{
+			instance = new ButtonBoard();
+		}
+		return instance;
+	}
 
-    protected ButtonBoard() 
-    {
-        mStick = new Joystick(1);
-    }
+	protected final Joystick mStick;
 
-    public boolean getButton(int _num) { return mStick.getRawButton(_num); }
+	protected ButtonBoard()
+	{
+		mStick = new Joystick(1);
+	}
 
-    public int getPOV() 
-    {
-    	return mStick.getPOV();
-    }    
+	public boolean getButton(int _num)
+	{
+		return mStick.getRawButton(_num);
+	}
+
+	public int getPOV()
+	{
+		return mStick.getPOV();
+	}
 }

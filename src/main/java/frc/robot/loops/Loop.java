@@ -5,12 +5,11 @@ package frc.robot.loops;
  */
 
 /**
- * Interface for loops, which are routines that run periodically.
- * Loops are typically registered to LoopControllers.
- * LoopControllers will call the onStart, onLoop, and onStop 
- * functions of each loop at the appropriate times. 
+ * Interface for loops, which are routines that run periodically. Loops are
+ * typically registered to LoopControllers. LoopControllers will call the
+ * onStart, onLoop, and onStop functions of each loop at the appropriate times.
  */
-public interface Loop 
+public interface Loop
 {
     public void onStart();
 

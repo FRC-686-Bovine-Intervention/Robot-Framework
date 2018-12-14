@@ -18,19 +18,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DataLogController
 {
 	// define separate static instances for each thread
-	
+
 	// log controller for the main robot thread
-	public static DataLogController robotInstance = new DataLogController("robot"); 
+	public static DataLogController robotInstance = new DataLogController("robot");
 
 	public static DataLogController getRobotLogController()
 	{
 		return robotInstance;
 	}
 
-	public DataLogController(){
-		
+	public DataLogController()
+	{
+
 	}
-	
+
 	// log controller for the main autonomous thread
 	public static DataLogController autoInstance = new DataLogController("auto");
 
@@ -54,8 +55,7 @@ public class DataLogController
 
 		// Determine folder for log files
 		File logDirectory = null;
-		if (logDirectory == null)
-			logDirectory = checkLogDirectory(new File("/media/sda1"));
+		if (logDirectory == null) logDirectory = checkLogDirectory(new File("/media/sda1"));
 		if (logDirectory == null)
 		{
 			logDirectory = new File("/home/lvuser/logs");
@@ -76,12 +76,10 @@ public class DataLogController
 	static public File checkLogDirectory(File root)
 	{
 		// does the root directory exist?
-		if (!root.isDirectory())
-			return null;
+		if (!root.isDirectory()) return null;
 
 		File logDirectory = new File(root, "logs");
-		if (!logDirectory.isDirectory())
-			return null;
+		if (!logDirectory.isDirectory()) return null;
 
 		return logDirectory;
 	}
@@ -139,12 +137,10 @@ public class DataLogController
 	{
 		boolean retVal = false;
 
-		if (ps == null)
-			retVal = true;
+		if (ps == null) retVal = true;
 
 		long now = System.currentTimeMillis();
-		if ((now - timeSinceLog) > minimumInterval)
-			retVal = true;
+		if ((now - timeSinceLog) > minimumInterval) retVal = true;
 
 		return retVal;
 	}
@@ -167,7 +163,8 @@ public class DataLogController
 						ps = new PrintStream(new FileOutputStream(logFile));
 						startTime = System.currentTimeMillis();
 					}
-				} else
+				}
+				else
 				{
 					if (fileOutput)
 					{
@@ -191,7 +188,8 @@ public class DataLogController
 						putValues();
 					}
 				}
-			} catch (IOException e)
+			}
+			catch (IOException e)
 			{
 				e.printStackTrace();
 			}
@@ -203,20 +201,18 @@ public class DataLogController
 
 	private final static long SOME_TIME_AFTER_1970 = 523980000000L;
 
-	public static String getTimestampString() 
+	public static String getTimestampString()
 	{
 		long now = System.currentTimeMillis();
-		if (now > SOME_TIME_AFTER_1970) 
+		if (now > SOME_TIME_AFTER_1970)
 		{
 			SimpleDateFormat formatName = new SimpleDateFormat("yyyyMMdd-HHmmss");
 			String timestampString = formatName.format(new Date());
 			return new String(timestampString);
 		}
-		else
-			return new String();
+		else return new String();
 	}
-	
-	
+
 	private void writeNames()
 	{
 		for (DataLogger logger : loggers)
@@ -226,9 +222,9 @@ public class DataLogController
 				for (String name : logger.logMap.keySet())
 				{
 					// remove SmartDashboard folder hierarchy
-				    int index = name.lastIndexOf('/');
-			    	name = name.substring(index+1);				
-					
+					int index = name.lastIndexOf('/');
+					name = name.substring(index + 1);
+
 					ps.print(',');
 					ps.print(name);
 				}
@@ -264,18 +260,12 @@ public class DataLogController
 					String key = entry.getKey();
 					Object value = entry.getValue();
 
-					if (value.getClass().equals(Boolean.class))
-						putValue(key, (Boolean) value);
-					else if (value.getClass().equals(Integer.class))
-						putValue(key, (Integer) value);
-					else if (value.getClass().equals(Double.class))
-						putValue(key, (Double) value);
-					else if (value.getClass().equals(Float.class))
-						putValue(key, (Double) value);
-					else if (value.getClass().equals(String.class))
-						putValue(key, (String) value);
-					else
-						putValue(key, "ERROR");
+					if (value.getClass().equals(Boolean.class)) putValue(key, (Boolean) value);
+					else if (value.getClass().equals(Integer.class)) putValue(key, (Integer) value);
+					else if (value.getClass().equals(Double.class)) putValue(key, (Double) value);
+					else if (value.getClass().equals(Float.class)) putValue(key, (Double) value);
+					else if (value.getClass().equals(String.class)) putValue(key, (String) value);
+					else putValue(key, "ERROR");
 				}
 			}
 		}

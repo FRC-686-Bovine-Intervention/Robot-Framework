@@ -13,7 +13,7 @@ package frc.robot.subsystems;
  * Each Subsystem also is responsible for instantializing all member components
  * at the start of the match.
  */
-public abstract class Subsystem 
+public abstract class Subsystem
 {
     public abstract void stop();
 

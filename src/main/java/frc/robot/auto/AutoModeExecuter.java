@@ -3,34 +3,35 @@ package frc.robot.auto;
 import frc.robot.lib.util.CrashTrackingRunnable;
 
 /**
- * This class selects, runs, and (if necessary) stops a specified autonomous mode
+ * This class selects, runs, and (if necessary) stops a specified autonomous
+ * mode
  */
-public class AutoModeExecuter 
+public class AutoModeExecuter
 {
     private AutoModeBase autoMode;
     private Thread autoThread = null;
-    
-    public void setAutoMode(AutoModeBase _autoMode) 
+
+    public void setAutoMode(AutoModeBase _autoMode)
     {
         autoMode = _autoMode;
     }
 
-    public AutoModeBase getAutoMode() 
+    public AutoModeBase getAutoMode()
     {
         return autoMode;
     }
 
-    public void start() 
+    public void start()
     {
 
-        if (autoThread == null) 
+        if (autoThread == null)
         {
-            autoThread = new Thread(new CrashTrackingRunnable() 
+            autoThread = new Thread(new CrashTrackingRunnable()
             {
                 @Override
-                public void runCrashTracked() 
+                public void runCrashTracked()
                 {
-                    if (autoMode != null) 
+                    if (autoMode != null)
                     {
                         autoMode.run();
                     }
@@ -41,9 +42,9 @@ public class AutoModeExecuter
 
     }
 
-    public void stop() 
+    public void stop()
     {
-        if (autoMode != null) 
+        if (autoMode != null)
         {
             autoMode.stop();
         }
