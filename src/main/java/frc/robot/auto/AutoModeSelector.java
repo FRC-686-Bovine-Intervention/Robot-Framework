@@ -14,6 +14,17 @@ import frc.robot.lib.util.Pose;
  */
 public class AutoModeSelector
 {
+	// singleton class
+	private static AutoModeSelector instance = null;
+
+	public static AutoModeSelector getInstance()
+	{
+		if (instance == null)
+		{
+			instance = new AutoModeSelector();
+		}
+		return instance;
+	}
 
     public enum StartDelayOption
     {
@@ -69,21 +80,21 @@ public class AutoModeSelector
         SmartDashboard.putData("Auto Mode", autoModeChooser);
     }
 
-    public static Pose getStartPosition()
+    public Pose getStartPosition()
     {
         StartingPosition startingPosition = (StartingPosition) startingPositionChooser.getSelected();
         return startingPosition.initialPose;
     }
 
 
-    public static double getStartDelay()
+    public double getStartDelay()
     {
         StartDelayOption startDelay = (StartDelayOption) startDelayChooser.getSelected();
         return startDelay.delaySec;
     }
 
 
-    public static AutoModeBase getAutoModeSelection()
+    public AutoModeBase getAutoModeSelection()
     {
         AutoModeOption autoMode = (AutoModeOption) autoModeChooser.getSelected();
 

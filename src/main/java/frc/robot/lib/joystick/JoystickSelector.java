@@ -8,6 +8,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class JoystickSelector
 {
+	// singleton class
+	private static JoystickSelector instance = null;
+
+	public static JoystickSelector getInstance()
+	{
+		if (instance == null)
+		{
+			instance = new JoystickSelector();
+		}
+		return instance;
+	}
+
+
     SendableChooser<JoystickOption> joystickChooser;
 
     enum JoystickOption

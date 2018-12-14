@@ -20,7 +20,7 @@ public class DriveStraightMode extends AutoModeBase
     {
         System.out.println("Starting Auto Mode: Drive Straight");
 
-        runAction(new WaitAction(AutoModeSelector.getStartDelay()));
+        runAction(new WaitAction(AutoModeSelector.getInstance().getStartDelay()));
         runAction(new DriveStraightAction(48.0, 12.0));     // drive forward 48" at 12"/sec
     }
 }

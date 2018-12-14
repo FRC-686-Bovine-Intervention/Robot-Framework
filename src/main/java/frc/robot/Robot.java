@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-import java.util.Arrays;
 import java.util.TimeZone;
 
 import edu.wpi.cscore.UsbCamera;
@@ -15,12 +14,14 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.auto.AutoModeExecuter;
+import frc.robot.auto.AutoModeSelector;
 import frc.robot.command_status.DriveCommand;
 import frc.robot.command_status.DriveState;
 import frc.robot.command_status.RobotState;
 import frc.robot.lib.joystick.ArcadeDriveJoystick;
 import frc.robot.lib.joystick.ButtonBoard;
 import frc.robot.lib.joystick.JoystickControlsBase;
+import frc.robot.lib.joystick.JoystickSelector;
 import frc.robot.lib.sensors.Limelight;
 import frc.robot.lib.util.CrashTracker;
 import frc.robot.lib.util.DataLogController;
@@ -30,14 +31,13 @@ import frc.robot.loops.DriveLoop;
 import frc.robot.loops.LoopController;
 import frc.robot.loops.RobotStateLoop;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Superstructure;
 
 public class Robot extends IterativeRobot
 {
 	private LoopController mEnabledLooper = new LoopController();
 	private LoopController mDisabledLooper = new LoopController();
-	JoystickControlsBase joystick = ArcadeDriveJoystick.getInstance();
+	JoystickControlsBase joystick = ArcadeDriveJoystick.getInstance();	// can be changed every teleopInit()
 	ButtonBoard buttonBoard = ButtonBoard.getInstance();
 
 	// private final SubsystemManager subsystemManager = new SubsystemManager (
@@ -51,7 +51,9 @@ public class Robot extends IterativeRobot
 	// 	)
 	// );
 
-	SmartDashboardInteractions smartDashboardInteractions;
+    private AutoModeSelector autoModeSelector = AutoModeSelector.getInstance();
+    private JoystickSelector joystickSelector = JoystickSelector.getInstance();
+
 	DataLogController robotLogger;
 
 	// Two camera options
@@ -106,9 +108,6 @@ public class Robot extends IterativeRobot
 			loopController.register(drive.getVelocityPIDLoop());
 			loopController.register(DriveLoop.getInstance());
 			loopController.register(RobotStateLoop.getInstance());
-
-			smartDashboardInteractions = new SmartDashboardInteractions();
-			smartDashboardInteractions.initWithDefaults();
 
 			// set datalogger and time info
 			TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
@@ -226,7 +225,7 @@ public class Robot extends IterativeRobot
 			autoModeExecuter = null;
 
 			autoModeExecuter = new AutoModeExecuter();
-			autoModeExecuter.setAutoMode(smartDashboardInteractions.getAutoModeSelection());
+			autoModeExecuter.setAutoMode(autoModeSelector.getAutoModeSelection());
 
 			setInitialPose(autoModeExecuter.getAutoMode().getInitialPose());
 
@@ -272,7 +271,7 @@ public class Robot extends IterativeRobot
 			CrashTracker.logTeleopInit();
 
 			// Select joystick control method
-			joystick = smartDashboardInteractions.getJoystickControlsMode();
+			joystick = joystickSelector.getJoystickControlsMode();
 
 			// Configure looper
 			loopController.start();

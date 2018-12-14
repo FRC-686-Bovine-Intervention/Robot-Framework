@@ -54,7 +54,7 @@ public class SquarePatternMode extends AutoModeBase
         // revPath.setReverseOrder();
         // revPath.setReverseDirection();
 
-        runAction(new WaitAction(AutoModeSelector.getStartDelay()));
+        runAction(new WaitAction(AutoModeSelector.getInstance().getStartDelay()));
         runAction(new PathFollowerAction(path)); // drive forward
         // runAction(new PathFollowerWithVisionAction(revPath)); // drive reversed
     }

@@ -16,7 +16,7 @@ public class StandStillMode extends AutoModeBase
     protected void routine() throws AutoModeEndedException
     {
         System.out.print("Starting Stand Still Mode...");
-        runAction(new WaitAction(AutoModeSelector.getStartDelay()));
+        runAction(new WaitAction(AutoModeSelector.getInstance().getStartDelay()));
         System.out.println("Done!");
     }
 }
