@@ -3,7 +3,8 @@ package frc.robot.auto.modes;
 import frc.robot.auto.AutoModeBase;
 import frc.robot.auto.AutoModeEndedException;
 import frc.robot.auto.AutoModeSelector;
-import frc.robot.auto.actions.*;
+import frc.robot.auto.actions.DriveStraightAction;
+import frc.robot.auto.actions.WaitAction;
 
 /**
  * Just drive in a straight line, using VelocityHeading mode

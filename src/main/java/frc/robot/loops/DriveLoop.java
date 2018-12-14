@@ -130,8 +130,8 @@ public class DriveLoop implements Loop
 		/*****************************************************************
 		 * Configure Master Motor Controllers
 		 *****************************************************************/
-		lMotorMaster = new TalonSRX(Constants.kLeftMotorMasterTalonId);
-		rMotorMaster = new TalonSRX(Constants.kRightMotorMasterTalonId);
+		lMotorMaster = new TalonSRX(Constants.kLeftMotorMasterDeviceId);
+		rMotorMaster = new TalonSRX(Constants.kRightMotorMasterDeviceId);
 
 		// Get status at 100Hz (faster than default 50 Hz)
 		lMotorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, Constants.kTalonTimeoutMs);
@@ -200,18 +200,18 @@ public class DriveLoop implements Loop
 		lMotorSlaves = new ArrayList<BaseMotorController>();
 		rMotorSlaves = new ArrayList<BaseMotorController>();
 		System.out.println("Competition Bot: 1 VictorSPX slave per side");
-		lMotorSlaves.add(new VictorSPX(Constants.kLeftMotorSlave1TalonId));
-		rMotorSlaves.add(new VictorSPX(Constants.kRightMotorSlave1TalonId));
+		lMotorSlaves.add(new VictorSPX(Constants.kLeftMotorSlave1DeviceId));
+		rMotorSlaves.add(new VictorSPX(Constants.kRightMotorSlave1DeviceId));
 
 		for (BaseMotorController lMotorSlave : lMotorSlaves)
 		{
-			lMotorSlave.follow(lMotorMaster); // give slave the TalonID of it's master
+			lMotorSlave.follow(lMotorMaster); // give slave the DeviceId of it's master
 			lMotorSlave.setNeutralMode(NeutralMode.Coast);
 			lMotorSlave.setInverted(Constants.kLeftMotorInverted);
 		}
 		for (BaseMotorController rMotorSlave : rMotorSlaves)
 		{
-			rMotorSlave.follow(rMotorMaster); // give slave the TalonID of it's master
+			rMotorSlave.follow(rMotorMaster); // give slave the DeviceId of it's master
 			rMotorSlave.setNeutralMode(NeutralMode.Coast);
 			rMotorSlave.setInverted(Constants.kRightMotorInverted);
 		}
