@@ -50,7 +50,53 @@ public class Limelight
         // m_tableName = get the name of the NT key.
     }
 
-    public void LimeLightInit()
+    /**
+     * Helper funciton to configure limelight after booting. 
+     * 
+     * Call this function from disabledPeriodic() in Robot.java
+     * (Limelight boots to slowly to be configured from robotInit() or disabledInit() )
+     * Modify configuration as needed
+     */
+    public void disabledPeriodic()
+    {
+        setPipeline(0);
+        setLEDMode(LedMode.kOff);
+        setCamMode(CamMode.kDriver);
+        setSnapshot(Snapshot.kOff);
+        setStream(StreamType.kPiPMain);
+    }
+
+    /**
+     * Helper funciton to configure limelight after booting. 
+     * 
+     * Call this function from autoInit() in Robot.java
+     * Modify configuration as needed
+     */
+    public void autoInit()
+    {
+        setPipeline(0);
+        setLEDMode(LedMode.kOn);
+        setCamMode(CamMode.kVision);
+        setSnapshot(Snapshot.kOff);
+        setStream(StreamType.kPiPMain);
+    }
+
+    /**
+     * Helper funciton to configure limelight after booting. 
+     * 
+     * Call this function from teleopInit() in Robot.java
+     * Modify configuration as needed
+     */
+    public void teleopInit()
+    {
+        setPipeline(0);
+        setLEDMode(LedMode.kOff);
+        setCamMode(CamMode.kDriver);
+        setSnapshot(Snapshot.kOff);
+        setStream(StreamType.kPiPMain);
+    }
+
+    public void LimelightInit()
     {
         // testAllTab();
     }
@@ -325,28 +371,28 @@ public class Limelight
      * space (-1 to 1) rather than degrees. *
      */
 
-    public double getAdvancedRotationToTarget(Advanced_Target raw)
+    public double getAdvancedRotationToTarget(AdvancedTarget raw)
     {
         NetworkTableEntry txRaw = m_table.getEntry("tx" + Integer.toString(raw.getValue()));
         double x = txRaw.getDouble(0.0);
         return x;
     }
 
-    public double getAdvancedDegVerticalToTarget(Advanced_Target raw)
+    public double getAdvancedDegVerticalToTarget(AdvancedTarget raw)
     {
         NetworkTableEntry tyRaw = m_table.getEntry("ty" + Integer.toString(raw.getValue()));
         double y = tyRaw.getDouble(0.0);
         return y;
     }
 
-    public double getAdvancedTargetArea(Advanced_Target raw)
+    public double getAdvancedTargetArea(AdvancedTarget raw)
     {
         NetworkTableEntry taRaw = m_table.getEntry("ta" + Integer.toString(raw.getValue()));
         double a = taRaw.getDouble(0.0);
         return a;
     }
 
-    public double getAdvancedSkewRotation(Advanced_Target raw)
+    public double getAdvancedSkewRotation(AdvancedTarget raw)
     {
         NetworkTableEntry tsRaw = m_table.getEntry("ts" + Integer.toString(raw.getValue()));
         double s = tsRaw.getDouble(0.0);
@@ -357,7 +403,7 @@ public class Limelight
     // If you are using raw targeting data, you can still utilize your calibrated
     // crosshairs:
 
-    public double[] getAdvancedRawCrosshair(Advanced_Crosshair raw)
+    public double[] getAdvancedRawCrosshair(AdvancedCrosshair raw)
     {
         double[] crosshars = new double[2];
         crosshars[0] = getAdvancedRawCrosshair_X(raw);
@@ -365,14 +411,14 @@ public class Limelight
         return crosshars;
     }
 
-    public double getAdvancedRawCrosshair_X(Advanced_Crosshair raw)
+    public double getAdvancedRawCrosshair_X(AdvancedCrosshair raw)
     {
         NetworkTableEntry cxRaw = m_table.getEntry("cx" + Integer.toString(raw.getValue()));
         double x = cxRaw.getDouble(0.0);
         return x;
     }
 
-    public double getAdvancedRawCrosshair_Y(Advanced_Crosshair raw)
+    public double getAdvancedRawCrosshair_Y(AdvancedCrosshair raw)
     {
         NetworkTableEntry cyRaw = m_table.getEntry("cy" + Integer.toString(raw.getValue()));
         double y = cyRaw.getDouble(0.0);
@@ -534,24 +580,24 @@ public class Limelight
 
     }
 
-    public enum Advanced_Target
+    public enum AdvancedTarget
     {
 
         kOne(0), kTwo(1), kThree(2);
 
-        private static final Map<Integer, Advanced_Target> MY_MAP = new HashMap<Integer, Advanced_Target>();
+        private static final Map<Integer, AdvancedTarget> MY_MAP = new HashMap<Integer, AdvancedTarget>();
 
         static
         {
-            for (Advanced_Target Advanced_Target : values())
+            for (AdvancedTarget AdvancedTarget : values())
             {
-                MY_MAP.put(Advanced_Target.getValue(), Advanced_Target);
+                MY_MAP.put(AdvancedTarget.getValue(), AdvancedTarget);
             }
         }
 
         private Integer value;
 
-        private Advanced_Target(Integer value)
+        private AdvancedTarget(Integer value)
         {
             this.value = value;
         }
@@ -561,7 +607,7 @@ public class Limelight
             return value;
         }
 
-        public static Advanced_Target getByValue(Integer value)
+        public static AdvancedTarget getByValue(Integer value)
         {
             return MY_MAP.get(value);
         }
@@ -573,24 +619,24 @@ public class Limelight
 
     }
 
-    public enum Advanced_Crosshair
+    public enum AdvancedCrosshair
     {
 
         kOne(0), kTwo(1);
 
-        private static final Map<Integer, Advanced_Crosshair> MY_MAP = new HashMap<Integer, Advanced_Crosshair>();
+        private static final Map<Integer, AdvancedCrosshair> MY_MAP = new HashMap<Integer, AdvancedCrosshair>();
 
         static
         {
-            for (Advanced_Crosshair Advanced_Crosshair : values())
+            for (AdvancedCrosshair AdvancedCrosshair : values())
             {
-                MY_MAP.put(Advanced_Crosshair.getValue(), Advanced_Crosshair);
+                MY_MAP.put(AdvancedCrosshair.getValue(), AdvancedCrosshair);
             }
         }
 
         private Integer value;
 
-        private Advanced_Crosshair(Integer value)
+        private AdvancedCrosshair(Integer value)
         {
             this.value = value;
         }
@@ -600,7 +646,7 @@ public class Limelight
             return value;
         }
 
-        public static Advanced_Crosshair getByValue(Integer value)
+        public static AdvancedCrosshair getByValue(Integer value)
         {
             return MY_MAP.get(value);
         }

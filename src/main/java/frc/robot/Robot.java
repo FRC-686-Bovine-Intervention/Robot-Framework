@@ -14,13 +14,13 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
-
 import frc.robot.auto.AutoModeExecuter;
 import frc.robot.command_status.DriveCommand;
 import frc.robot.command_status.DriveState;
 import frc.robot.command_status.RobotState;
 import frc.robot.lib.joystick.ArcadeDriveJoystick;
 import frc.robot.lib.joystick.JoystickControlsBase;
+import frc.robot.lib.sensors.Limelight;
 import frc.robot.lib.util.CrashTracker;
 import frc.robot.lib.util.DataLogController;
 import frc.robot.lib.util.DataLogger;
@@ -38,6 +38,9 @@ public class Robot extends IterativeRobot
 
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 	JoystickControlsBase controls = ArcadeDriveJoystick.getInstance();
+
+	// Two camera options
+	Limelight limelight = new Limelight();
 	UsbCamera usbCamera;
 
 	AutoModeExecuter autoModeExecuter = null;
@@ -77,7 +80,7 @@ public class Robot extends IterativeRobot
 		try
 		{
 			CrashTracker.logRobotInit();
-
+			
 			usbCamera = CameraServer.getInstance().startAutomaticCapture("Intake Camera", 0);
 			usbCamera.setResolution(320, 240);
 			usbCamera.setFPS(15);
@@ -169,6 +172,8 @@ public class Robot extends IterativeRobot
 	{
 		try
 		{
+			limelight.disabledPeriodic();
+
 			stopAll(); // stop all actuators
 
 			System.gc(); // runs garbage collector
@@ -191,6 +196,7 @@ public class Robot extends IterativeRobot
 		boolean logToFile = true;
 		boolean logToSmartDashboard = true;
 		robotLogger.setOutputMode(logToFile, logToSmartDashboard);
+		limelight.autoInit();
 
 		try
 		{
@@ -244,6 +250,7 @@ public class Robot extends IterativeRobot
 		boolean logToFile = true;
 		boolean logToSmartDashboard = true;
 		robotLogger.setOutputMode(logToFile, logToSmartDashboard);
+		limelight.teleopInit();
 
 		try
 		{
