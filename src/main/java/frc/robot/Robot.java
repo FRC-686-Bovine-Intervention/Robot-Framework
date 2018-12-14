@@ -7,18 +7,19 @@
 
 package frc.robot;
 
+import java.util.Arrays;
 import java.util.TimeZone;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.auto.AutoModeExecuter;
 import frc.robot.command_status.DriveCommand;
 import frc.robot.command_status.DriveState;
 import frc.robot.command_status.RobotState;
 import frc.robot.lib.joystick.ArcadeDriveJoystick;
+import frc.robot.lib.joystick.ButtonBoard;
 import frc.robot.lib.joystick.JoystickControlsBase;
 import frc.robot.lib.sensors.Limelight;
 import frc.robot.lib.util.CrashTracker;
@@ -29,15 +30,29 @@ import frc.robot.loops.DriveLoop;
 import frc.robot.loops.LoopController;
 import frc.robot.loops.RobotStateLoop;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Superstructure;
 
 public class Robot extends IterativeRobot
 {
+	private LoopController mEnabledLooper = new LoopController();
+	private LoopController mDisabledLooper = new LoopController();
+	JoystickControlsBase joystick = ArcadeDriveJoystick.getInstance();
+	ButtonBoard buttonBoard = ButtonBoard.getInstance();
+
+	// private final SubsystemManager subsystemManager = new SubsystemManager (
+	// 	Arrays.asList(
+	// 		RobotStateEstimator.getInstance(),
+	// 		Drive.getInstance(),
+	// 		Superstructure.getInstance(),
+	// 		Intake.getInstance(),
+	// 		Elevator.getInstance(),
+	// 		Infrastructure.getInstance()
+	// 	)
+	// );
+
 	SmartDashboardInteractions smartDashboardInteractions;
 	DataLogController robotLogger;
-
-	PowerDistributionPanel pdp = new PowerDistributionPanel();
-	JoystickControlsBase controls = ArcadeDriveJoystick.getInstance();
 
 	// Two camera options
 	Limelight limelight = new Limelight();
@@ -80,7 +95,7 @@ public class Robot extends IterativeRobot
 		try
 		{
 			CrashTracker.logRobotInit();
-			
+
 			usbCamera = CameraServer.getInstance().startAutomaticCapture("Intake Camera", 0);
 			usbCamera.setResolution(320, 240);
 			usbCamera.setFPS(15);
@@ -257,7 +272,7 @@ public class Robot extends IterativeRobot
 			CrashTracker.logTeleopInit();
 
 			// Select joystick control method
-			controls = smartDashboardInteractions.getJoystickControlsMode();
+			joystick = smartDashboardInteractions.getJoystickControlsMode();
 
 			// Configure looper
 			loopController.start();
@@ -284,7 +299,7 @@ public class Robot extends IterativeRobot
 	{
 		try
 		{
-			DriveCommand driveCmd = controls.getDriveCommand();
+			DriveCommand driveCmd = joystick.getDriveCommand();
 			drive.setOpenLoop(driveCmd);
 		}
 		catch (Throwable t)
@@ -317,14 +332,7 @@ public class Robot extends IterativeRobot
 		robotLogger.log();
 	}
 
-	private final DataLogger logger = new DataLogger()
-	{
-		@Override
-		public void log()
-		{
-			put("OperationalMode", operationalMode.getVal());
-		}
-	};
+	private final DataLogger logger=new DataLogger(){@Override public void log(){put("OperationalMode",operationalMode.getVal());}};
 
 	public DataLogger getLogger()
 	{
