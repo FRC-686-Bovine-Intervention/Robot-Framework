@@ -3,11 +3,12 @@ package frc.robot.loops;
 import java.util.ArrayList;
 import java.util.List;
 
-import frc.robot.lib.util.CrashTrackingRunnable;
-import frc.robot.Constants;
-
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import frc.robot.Constants;
+import frc.robot.lib.util.CrashTrackingRunnable;
 
 /**
  * This code runs all of the robot's loops. Loop objects are stored in a List
@@ -21,7 +22,6 @@ public class LoopController
     private boolean running_;
 
     private final Notifier notifier_; // the Notifier will run the function runCrashTracked() with a period of kPeriod
-
     private final List<Loop> loops_;
     private final Object taskRunningLock_ = new Object();
     private double prev_time_ = 0;
@@ -76,7 +76,7 @@ public class LoopController
                 prev_time_ = Timer.getFPGATimestamp();
                 for (Loop loop : loops_)
                 {
-                    // System.out.println("Starting " + loop);
+                    System.out.println("Starting " + loop);
                     loop.onStart();
                 }
                 running_ = true;
@@ -97,11 +97,16 @@ public class LoopController
                 running_ = false;
                 for (Loop loop : loops_)
                 {
-                    // System.out.println("Stopping " + loop);
+                    System.out.println("Stopping " + loop);
                     loop.onStop();
                 }
             }
         }
+    }
+
+    public void outputToSmartDashboard()
+    {
+        SmartDashboard.putNumber("looper_dt", dt_);
     }
 
 }
