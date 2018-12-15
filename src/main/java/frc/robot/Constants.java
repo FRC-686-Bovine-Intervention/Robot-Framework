@@ -1,6 +1,8 @@
 package frc.robot;
 
-import frc.robot.lib.util.ConstantsBase;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 /**
  * Attribution: adapted from FRC Team 254
@@ -10,7 +12,7 @@ import frc.robot.lib.util.ConstantsBase;
  * A list of constants used by the rest of the robot code. This include physics
  * constants as well as constants determined through calibrations.
  */
-public class Constants extends ConstantsBase
+public class Constants
 {
     // singleton class
     private static Constants instance = null;
@@ -158,4 +160,36 @@ public class Constants extends ConstantsBase
     public static double kTargetLocationFilterConstant = (30.0 * kLoopDt); // 30 time constants in 1 second
 
     public static double kTargetDistanceFromCameraInches = kCenterToFrontBumper - kCameraPoseX + 12.0;
+
+
+    /**
+     * @return the MAC address of the robot
+     */
+    public static String getMACAddress() {
+        try {
+            Enumeration<NetworkInterface> nwInterface = NetworkInterface.getNetworkInterfaces();
+            StringBuilder ret = new StringBuilder();
+            while (nwInterface.hasMoreElements()) {
+                NetworkInterface nis = nwInterface.nextElement();
+                if (nis != null) {
+                    byte[] mac = nis.getHardwareAddress();
+                    if (mac != null) {
+                        for (int i = 0; i < mac.length; i++) {
+                            ret.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+                        }
+                        return ret.toString();
+                    } else {
+                        System.out.println("Address doesn't exist or is not accessible");
+                    }
+                } else {
+                    System.out.println("Network Interface for the specified address is not found.");
+                }
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }    
 };
