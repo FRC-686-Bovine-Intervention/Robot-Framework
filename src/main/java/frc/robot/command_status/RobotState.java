@@ -1,6 +1,6 @@
 package frc.robot.command_status;
 
-import frc.robot.lib.util.DataLogger;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.lib.util.InterpolatingDouble;
 import frc.robot.lib.util.InterpolatingTreeMap;
 import frc.robot.lib.util.Kinematics;
@@ -148,24 +148,15 @@ public class RobotState
         return robotSpeed.linearSpeed;
     }
 
-    private final DataLogger logger = new DataLogger()
+    public void outputToSmartDashboard() 
     {
-        @Override
-        public void log()
+        synchronized (RobotState.this)
         {
-            synchronized (RobotState.this)
-            {
-                Pose odometry = getLatestFieldToVehicle();
-                put("RobotState/positionX", odometry.getX());
-                put("RobotState/positionY", odometry.getY());
-                put("RobotState/headingDeg", odometry.getHeadingDeg());
-            }
+            Pose odometry = getLatestFieldToVehicle();
+            SmartDashboard.putNumber("RobotState/positionX", odometry.getX());
+            SmartDashboard.putNumber("RobotState/positionY", odometry.getY());
+            SmartDashboard.putNumber("RobotState/headingDeg", odometry.getHeadingDeg());
         }
     };
-
-    public DataLogger getLogger()
-    {
-        return logger;
-    }
 
 }

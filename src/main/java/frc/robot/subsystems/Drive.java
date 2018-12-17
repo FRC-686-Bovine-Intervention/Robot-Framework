@@ -248,6 +248,19 @@ public class Drive extends Subsystem
 		driveCmd.setResetEncoders();
 	}
 
+    @Override
+    public boolean checkSystem()
+    {
+		// TODO: implement checkSystem
+        return true;
+    }
+
+    @Override
+    public void outputTelemetry()
+    {
+		// TODO: implement outputTelemetry
+    }
+
 	private final DataLogger logger = new DataLogger()
 	{
 		@Override

@@ -61,24 +61,20 @@ public class DriveLoop implements Loop
 	public static double kDriveWheelDiameterInches = 11.500;
 	public static double kTrackLengthInches = 21.500;
 	public static double kTrackWidthInches = kDriveWheelCircumInches / Math.PI;
-	public static double kTrackEffectiveDiameter = (kTrackWidthInches * kTrackWidthInches
-			+ kTrackLengthInches * kTrackLengthInches) / kTrackWidthInches;;
+	public static double kTrackEffectiveDiameter = (kTrackWidthInches * kTrackWidthInches + kTrackLengthInches * kTrackLengthInches) / kTrackWidthInches;;
 	public static double kTrackScrubFactor = 0.5;
 
 	// Wheel Encoder
-	public static double kQuadEncoderGain = 1.0; // number of drive shaft rotations per encoder shaft rotation
+	public static double kQuadEncoderGain = 1.0; 	// number of drive shaft rotations per encoder shaft rotation
 													// 1.0 if encoder is directly coupled to the drive shaft
 	public static int kQuadEncoderCodesPerRev = 64;
 	public static int kQuadEncoderUnitsPerRev = (int) (4 * kQuadEncoderCodesPerRev / kQuadEncoderGain);;
 	public static double kQuadEncoderStatusFramePeriod = 0.100; // 100 ms
 
 	// CONTROL LOOP GAINS
-	public static double kDriveSecondsFromNeutralToFull = 0.375; // decrease acceleration (reduces current, robot
-																	// tipping)
-	public static double kNominalEncoderPulsePer100ms = 85; // velocity at a nominal throttle (measured using NI web
-															// interface)
-	public static double kNominalPercentOutput = 0.4447; // percent output of motor at above throttle (using NI web
-															// interface)
+	public static double kDriveSecondsFromNeutralToFull = 0.375; // decrease acceleration (reduces current, robot tipping)
+	public static double kNominalEncoderPulsePer100ms = 85; // velocity at a nominal throttle (measured using NI web interface)
+	public static double kNominalPercentOutput = 0.4447; // percent output of motor at above throttle (using NI web interface)
 
 	// PID gains for drive velocity loop (sent to Talon)
 	// Units: error is 4*256 counts/rev. Max output is +/- 1023 units.
@@ -134,62 +130,56 @@ public class DriveLoop implements Loop
 		rMotorMaster = new TalonSRX(Constants.kRightMotorMasterDeviceId);
 
 		// Get status at 100Hz (faster than default 50 Hz)
-		lMotorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, Constants.kTalonTimeoutMs);
-		rMotorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, Constants.kTalonTimeoutMs);
+		lMotorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, Constants.kCANTimeoutMs);
+		rMotorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, Constants.kCANTimeoutMs);
 
 		lMotorMaster.set(ControlMode.PercentOutput, 0.0);
 		rMotorMaster.set(ControlMode.PercentOutput, 0.0);
 		lMotorMaster.setNeutralMode(NeutralMode.Coast);
 		rMotorMaster.setNeutralMode(NeutralMode.Coast);
 
-		lMotorMaster.configOpenloopRamp(kDriveSecondsFromNeutralToFull, Constants.kTalonTimeoutMs);
-		rMotorMaster.configOpenloopRamp(kDriveSecondsFromNeutralToFull, Constants.kTalonTimeoutMs);
+		lMotorMaster.configOpenloopRamp(kDriveSecondsFromNeutralToFull, Constants.kCANTimeoutMs);
+		rMotorMaster.configOpenloopRamp(kDriveSecondsFromNeutralToFull, Constants.kCANTimeoutMs);
 
 		// Set up the encoders
-		lMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, Constants.kTalonPidIdx,
-				Constants.kTalonTimeoutMs); // configure for closed-loop PID
-		rMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, Constants.kTalonPidIdx,
-				Constants.kTalonTimeoutMs);
+		lMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, Constants.kTalonPidIdx, Constants.kCANTimeoutMs); // configure for closed-loop PID
+		rMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, Constants.kTalonPidIdx, Constants.kCANTimeoutMs);
 		lMotorMaster.setSensorPhase(Constants.kLeftMotorSensorPhase);
 		rMotorMaster.setSensorPhase(Constants.kRightMotorSensorPhase);
 		lMotorMaster.setInverted(Constants.kLeftMotorInverted);
 		rMotorMaster.setInverted(Constants.kRightMotorInverted);
 
 		// Load velocity control gains
-		lMotorMaster.config_kF(kVelocityControlSlot, kDriveVelocityKf, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_kP(kVelocityControlSlot, kDriveVelocityKp, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_kI(kVelocityControlSlot, kDriveVelocityKi, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_kD(kVelocityControlSlot, kDriveVelocityKd, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_IntegralZone(kVelocityControlSlot, kDriveVelocityIZone, Constants.kTalonTimeoutMs);
+		lMotorMaster.config_kF(kVelocityControlSlot, kDriveVelocityKf, Constants.kCANTimeoutMs);
+		lMotorMaster.config_kP(kVelocityControlSlot, kDriveVelocityKp, Constants.kCANTimeoutMs);
+		lMotorMaster.config_kI(kVelocityControlSlot, kDriveVelocityKi, Constants.kCANTimeoutMs);
+		lMotorMaster.config_kD(kVelocityControlSlot, kDriveVelocityKd, Constants.kCANTimeoutMs);
+		lMotorMaster.config_IntegralZone(kVelocityControlSlot, kDriveVelocityIZone, Constants.kCANTimeoutMs);
 
-		rMotorMaster.config_kF(kVelocityControlSlot, kDriveVelocityKf, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_kP(kVelocityControlSlot, kDriveVelocityKp, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_kI(kVelocityControlSlot, kDriveVelocityKi, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_kD(kVelocityControlSlot, kDriveVelocityKd, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_IntegralZone(kVelocityControlSlot, kDriveVelocityIZone, Constants.kTalonTimeoutMs);
+		rMotorMaster.config_kF(kVelocityControlSlot, kDriveVelocityKf, Constants.kCANTimeoutMs);
+		rMotorMaster.config_kP(kVelocityControlSlot, kDriveVelocityKp, Constants.kCANTimeoutMs);
+		rMotorMaster.config_kI(kVelocityControlSlot, kDriveVelocityKi, Constants.kCANTimeoutMs);
+		rMotorMaster.config_kD(kVelocityControlSlot, kDriveVelocityKd, Constants.kCANTimeoutMs);
+		rMotorMaster.config_IntegralZone(kVelocityControlSlot, kDriveVelocityIZone, Constants.kCANTimeoutMs);
 
-		lMotorMaster.configAllowableClosedloopError(kVelocityControlSlot, kDriveVelocityAllowableError,
-				Constants.kTalonTimeoutMs);
-		rMotorMaster.configAllowableClosedloopError(kVelocityControlSlot, kDriveVelocityAllowableError,
-				Constants.kTalonTimeoutMs);
+		lMotorMaster.configAllowableClosedloopError(kVelocityControlSlot, kDriveVelocityAllowableError,	Constants.kCANTimeoutMs);
+		rMotorMaster.configAllowableClosedloopError(kVelocityControlSlot, kDriveVelocityAllowableError,	Constants.kCANTimeoutMs);
 
 		// Load base lock control gains
-		lMotorMaster.config_kF(kBaseLockControlSlot, kDriveBaseLockKf, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_kP(kBaseLockControlSlot, kDriveBaseLockKp, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_kI(kBaseLockControlSlot, kDriveBaseLockKi, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_kD(kBaseLockControlSlot, kDriveBaseLockKd, Constants.kTalonTimeoutMs);
-		lMotorMaster.config_IntegralZone(kBaseLockControlSlot, kDriveBaseLockIZone, Constants.kTalonTimeoutMs);
+		lMotorMaster.config_kF(kBaseLockControlSlot, kDriveBaseLockKf, Constants.kCANTimeoutMs);
+		lMotorMaster.config_kP(kBaseLockControlSlot, kDriveBaseLockKp, Constants.kCANTimeoutMs);
+		lMotorMaster.config_kI(kBaseLockControlSlot, kDriveBaseLockKi, Constants.kCANTimeoutMs);
+		lMotorMaster.config_kD(kBaseLockControlSlot, kDriveBaseLockKd, Constants.kCANTimeoutMs);
+		lMotorMaster.config_IntegralZone(kBaseLockControlSlot, kDriveBaseLockIZone, Constants.kCANTimeoutMs);
 
-		rMotorMaster.config_kF(kBaseLockControlSlot, kDriveBaseLockKf, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_kP(kBaseLockControlSlot, kDriveBaseLockKp, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_kI(kBaseLockControlSlot, kDriveBaseLockKi, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_kD(kBaseLockControlSlot, kDriveBaseLockKd, Constants.kTalonTimeoutMs);
-		rMotorMaster.config_IntegralZone(kBaseLockControlSlot, kDriveBaseLockIZone, Constants.kTalonTimeoutMs);
+		rMotorMaster.config_kF(kBaseLockControlSlot, kDriveBaseLockKf, Constants.kCANTimeoutMs);
+		rMotorMaster.config_kP(kBaseLockControlSlot, kDriveBaseLockKp, Constants.kCANTimeoutMs);
+		rMotorMaster.config_kI(kBaseLockControlSlot, kDriveBaseLockKi, Constants.kCANTimeoutMs);
+		rMotorMaster.config_kD(kBaseLockControlSlot, kDriveBaseLockKd, Constants.kCANTimeoutMs);
+		rMotorMaster.config_IntegralZone(kBaseLockControlSlot, kDriveBaseLockIZone, Constants.kCANTimeoutMs);
 
-		lMotorMaster.configAllowableClosedloopError(kBaseLockControlSlot, kDriveBaseLockAllowableError,
-				Constants.kTalonTimeoutMs);
-		rMotorMaster.configAllowableClosedloopError(kBaseLockControlSlot, kDriveBaseLockAllowableError,
-				Constants.kTalonTimeoutMs);
+		lMotorMaster.configAllowableClosedloopError(kBaseLockControlSlot, kDriveBaseLockAllowableError,	Constants.kCANTimeoutMs);
+		rMotorMaster.configAllowableClosedloopError(kBaseLockControlSlot, kDriveBaseLockAllowableError,	Constants.kCANTimeoutMs);
 
 		lMotorMaster.configOpenloopRamp(kDriveVelocityRampRate, 0);
 		rMotorMaster.configOpenloopRamp(kDriveVelocityRampRate, 0);
@@ -273,24 +263,19 @@ public class DriveLoop implements Loop
 
 	private void getStatus()
 	{
-		synchronized (driveState) // lock DriveState until we update it, so that objects reading DriveState don't
+		synchronized (driveState) 	// lock DriveState until we update it, so that objects reading DriveState don't
 									// get partial updates
 		{
-			// get Talon control & brake modes (assume right motor is configured
-			// identically)
+			// get Talon control & brake modes (assume right motor is configured identically)
 			driveState.setTalonControlMode(lMotorMaster.getControlMode());
 			driveState.setNeutralMode(DriveCommand.getNeutralMode());
 
 			// get encoder values from hardware, set in Drive
-			driveState.setLeftDistanceInches(
-					encoderUnitsToInches(lMotorMaster.getSelectedSensorPosition(Constants.kTalonPidIdx)));
-			driveState.setRightDistanceInches(
-					encoderUnitsToInches(rMotorMaster.getSelectedSensorPosition(Constants.kTalonPidIdx)));
+			driveState.setLeftDistanceInches(encoderUnitsToInches(lMotorMaster.getSelectedSensorPosition(Constants.kTalonPidIdx)));
+			driveState.setRightDistanceInches(encoderUnitsToInches(rMotorMaster.getSelectedSensorPosition(Constants.kTalonPidIdx)));
 
-			driveState.setLeftSpeedInchesPerSec(encoderUnitsPerFrameToInchesPerSecond(
-					lMotorMaster.getSelectedSensorVelocity(Constants.kTalonPidIdx)));
-			driveState.setRightSpeedInchesPerSec(encoderUnitsPerFrameToInchesPerSecond(
-					rMotorMaster.getSelectedSensorVelocity(Constants.kTalonPidIdx)));
+			driveState.setLeftSpeedInchesPerSec(encoderUnitsPerFrameToInchesPerSecond(lMotorMaster.getSelectedSensorVelocity(Constants.kTalonPidIdx)));
+			driveState.setRightSpeedInchesPerSec(encoderUnitsPerFrameToInchesPerSecond(rMotorMaster.getSelectedSensorVelocity(Constants.kTalonPidIdx)));
 
 			/*
 			 * measured angle decreases with clockwise rotation it should increase with
@@ -300,8 +285,7 @@ public class DriveLoop implements Loop
 			driveState.setHeadingDeg(gyro.getHeadingDeg());
 
 			driveState.setMotorCurrent(lMotorMaster.getOutputCurrent(), rMotorMaster.getOutputCurrent());
-			driveState.setMotorPIDError(lMotorMaster.getClosedLoopError(Constants.kTalonPidIdx),
-					rMotorMaster.getClosedLoopError(Constants.kTalonPidIdx));
+			driveState.setMotorPIDError(lMotorMaster.getClosedLoopError(Constants.kTalonPidIdx),rMotorMaster.getClosedLoopError(Constants.kTalonPidIdx));
 
 			switch (driveState.getTalonControlMode())
 			{
@@ -311,12 +295,12 @@ public class DriveLoop implements Loop
 
 			case Position:
 				driveState.setMotorStatus(lMotorMaster.getSelectedSensorPosition(Constants.kTalonPidIdx),
-						rMotorMaster.getSelectedSensorPosition(Constants.kTalonPidIdx));
+										  rMotorMaster.getSelectedSensorPosition(Constants.kTalonPidIdx));
 				break;
 
 			case Velocity:
 				driveState.setMotorStatus(lMotorMaster.getSelectedSensorVelocity(Constants.kTalonPidIdx),
-						rMotorMaster.getSelectedSensorVelocity(Constants.kTalonPidIdx));
+										  rMotorMaster.getSelectedSensorVelocity(Constants.kTalonPidIdx));
 				break;
 
 			case Disabled:
@@ -340,8 +324,7 @@ public class DriveLoop implements Loop
 			return;
 		}
 
-		synchronized (newCmd) // lock DriveCommand so no one changes it under us while we are sending the
-								// commands
+		synchronized (newCmd) // lock DriveCommand so no one changes it under us while we are sending the commands
 		{
 			setControlMode(newCmd);
 			setMotors(newCmd);
@@ -365,10 +348,8 @@ public class DriveLoop implements Loop
 				lMotorMaster.selectProfileSlot(kBaseLockControlSlot, Constants.kTalonPidIdx);
 				rMotorMaster.selectProfileSlot(kBaseLockControlSlot, Constants.kTalonPidIdx);
 
-				lMotorMaster.set(ControlMode.Position,
-						(double) (lMotorMaster.getSelectedSensorPosition(Constants.kTalonPidIdx)));
-				rMotorMaster.set(ControlMode.Position,
-						(double) (rMotorMaster.getSelectedSensorPosition(Constants.kTalonPidIdx)));
+				lMotorMaster.set(ControlMode.Position, (double) (lMotorMaster.getSelectedSensorPosition(Constants.kTalonPidIdx)));
+				rMotorMaster.set(ControlMode.Position, (double) (rMotorMaster.getSelectedSensorPosition(Constants.kTalonPidIdx)));
 				break;
 
 			case Velocity:
@@ -462,10 +443,10 @@ public class DriveLoop implements Loop
 		if (newCmd.getResetEncoders())
 		{
 			SensorCollection collection = lMotorMaster.getSensorCollection();
-			collection.setQuadraturePosition(0, Constants.kTalonTimeoutMs);
+			collection.setQuadraturePosition(0, Constants.kCANTimeoutMs);
 
 			collection = rMotorMaster.getSensorCollection();
-			collection.setQuadraturePosition(0, Constants.kTalonTimeoutMs);
+			collection.setQuadraturePosition(0, Constants.kCANTimeoutMs);
 
 			// cannot reset gyro heading in hardware.
 			// calibration to desired initial pose is done in RobotState.reset() called from

@@ -4,9 +4,6 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
-/**
- * Attribution: adapted from FRC Team 254
- */
 
 /**
  * A list of constants used by the rest of the robot code. This include physics
@@ -41,34 +38,38 @@ public class Constants
     // Using Ethernet to connect to roboRIO: http://10.6.86.2 (after static IP has been set using USB connection)
 
     // Motor Controllers
-    public static int kLeftMotorMasterDeviceId = 1;
-    public static int kLeftMotorSlave1DeviceId = 2;
-    public static int kLeftMotorSlave2DeviceId = 3;
-    public static int kRightMotorMasterDeviceId = 4;
-    public static int kRightMotorSlave1DeviceId = 5;
-    public static int kRightMotorSlave2DeviceId = 6;
+    public static int kLeftMotorMasterDeviceId =   1;
+    public static int kLeftMotorSlave1DeviceId =   2;
+    public static int kLeftMotorSlave2DeviceId =   3;
+    public static int kRightMotorMasterDeviceId =  4;
+    public static int kRightMotorSlave1DeviceId =  5;
+    public static int kRightMotorSlave2DeviceId =  6;
+    public static int kExampleMasterDeviceId =    88;
+    public static int kExampleSlaveDeviceId =     99;
 
     //-------------------------------------------
     // PWM Ports
     //-------------------------------------------
-    //      Plug the PWM/servo cable from the following devices into the indicated PWM ports on the roboRIO
+    // Plug the PWM/servo cable from the following devices into the indicated PWM ports on the roboRIO
 
     public static int kExample1PwmPort = 1;
     public static int kExample2PwmPort = 2;
     public static int kExample3PwmPort = 3;
+    public static int kExampleSubsystemLimitSwitchPwmId = 99;
 
     //-------------------------------------------
     // Pneumatics Control Module (PCM) Channels
     //-------------------------------------------
-    //      Plug the PWM/servo cable from the following devices into the indicated PWM ports on the roboRIO
+    // Plug the PWM/servo cable from the following devices into the indicated PWM ports on the roboRIO
+    // if we use more than 8 channels, we'll need a second PCM, and will need to add a PCM module ID to this list
 
     // Solenoids
     public static final int kExample1ForwardChannel = 0;
     public static final int kExample1ReverseChannel = 1;
-    public static final int kExample2ForwardChannel = 0;
-    public static final int kExample2ReverseChannel = 1;
-    public static final int kExample3ForwardChannel = 0;
-    public static final int kExample3ReverseChannel = 1;
+    public static final int kExample2ForwardChannel = 2;
+    public static final int kExample2ReverseChannel = 3;
+    public static final int kExample3ForwardChannel = 4;
+    public static final int kExample3ReverseChannel = 5;
 
     // End Port/Channel Numbers
     
@@ -103,8 +104,10 @@ public class Constants
 
     public static double kLoopDt = 0.01;
     public static double kDriveWatchdogTimerThreshold = 0.500;
-    public static int kTalonTimeoutMs = 5; // ms
-    public static int kTalonPidIdx = 0; // 0 for non-cascaded PIDs, 1 for cascaded PIDs
+    public static final int kCANTimeoutMs = 10;         // ms, use for on the fly updates
+    public static final int kLongCANTimeoutMs = 100;    // ms, use for constructors
+
+    public static int kTalonPidIdx = 0; // 0 for primary closed-loop PIDs, 1 for auxiliary closed-loop PIDs
 
     public static double kNominalBatteryVoltage = 12.0;
 

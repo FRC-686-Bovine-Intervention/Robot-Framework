@@ -100,8 +100,7 @@ public class PathFollower
 		currentPose = robotState.getLatestFieldToVehicle();
 		currentTime = Timer.getFPGATimestamp();
 
-		// FIXME: add timestamp synchronization to timestamps. Using adjusted current
-		// timestamp for now
+		// FIXME: add timestamp synchronization to timestamps. Using adjusted current timestamp for now
 		imageTimestamp = currentTime - Constants.kCameraLatencySeconds; // remove camera latency
 
 		// calculate target location based on *previous* robot pose
@@ -110,8 +109,7 @@ public class PathFollower
 		// ---------------------------------------------------
 		// Process
 		// ---------------------------------------------------
-		wheelSpeed = pathVisionDrive(currentTime, currentPose, previousPose, imageTimestamp, normalizedTargetX,
-				normalizedTargetWidth); // sets speed, curvature to follow path
+		wheelSpeed = pathVisionDrive(currentTime, currentPose, previousPose, imageTimestamp, normalizedTargetX,	normalizedTargetWidth); // sets speed, curvature to follow path
 
 		// ---------------------------------------------------
 		// Output: Send drive control
@@ -126,8 +124,7 @@ public class PathFollower
 			prevTime = _currentTime; // avoid calling Timer.getFPGATimestamp() in this function to allow off-robot
 										// testing
 
-		// System.out.println("At " + _currentPose + " Driving to " +
-		// path.getSegmentEnd());
+		// System.out.println("At " + _currentPose + " Driving to " + path.getSegmentEnd());
 
 		remainingDistance = Double.MAX_VALUE;
 		double finalSpeed = 0;
@@ -148,7 +145,7 @@ public class PathFollower
 		}
 		else
 		{
-			remainingDistance = distanceToTargetInches - Constants.kPegTargetDistanceThresholdFromCameraInches;
+			remainingDistance = distanceToTargetInches - Constants.kTargetDistanceFromCameraInches;
 			finalSpeed = path.getSegmentFinalSpeed();
 			maxSpeed = Constants.kVisionMaxVel;
 			maxAccel = Constants.kVisionMaxAccel;
@@ -159,8 +156,7 @@ public class PathFollower
 		if (path.getReverseDirection())
 		{
 			speed = -speed;
-			curvature = -curvature; // TODO: simplify by removing this, and removing flipping heading 180 degrees
-									// below?
+			curvature = -curvature; // TODO: simplify by removing this, and removing flipping heading 180 degrees below?
 		}
 
 		wheelSpeed = Kinematics.inverseKinematicsFromSpeedCurvature(speed, curvature);
@@ -247,8 +243,7 @@ public class PathFollower
 			}
 		}
 
-		// Drive towards target, even if we didn't get a valid Vision co-processor
-		// message this time
+		// Drive towards target, even if we didn't get a valid Vision co-processor message this time
 		if (state == PathVisionState.VISION)
 		{
 			Vector2d robotToTarget = avgTargetLocation.sub(_currentPose.getPosition());
@@ -258,10 +253,8 @@ public class PathFollower
 			// ---------------------------------------------------
 			// Calculate motor settings to turn towards target
 			// ---------------------------------------------------
-			lookaheadDist = Math.min(Constants.kVisionLookaheadDist, distanceToTargetInches); // length of chord <=
-																								// kVisionLookaheadDist
-			curvature = 2 * Math.sin(headingToTarget) / lookaheadDist; // curvature = 1/radius of circle (positive: turn
-																		// left, negative: turn right)
+			lookaheadDist = Math.min(Constants.kVisionLookaheadDist, distanceToTargetInches); // length of chord <= kVisionLookaheadDist
+			curvature = 2 * Math.sin(headingToTarget) / lookaheadDist; // curvature = 1/radius of circle (positive: turn left, negative: turn right)
 		}
 		else
 		{

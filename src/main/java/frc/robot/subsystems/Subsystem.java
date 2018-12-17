@@ -17,33 +17,19 @@ import frc.robot.loops.ILooper;
  */
 public abstract class Subsystem
 {
-    public void writeToLog()
-    {
-    }
+    public void registerEnabledLoops(ILooper enabledLooper) {}
 
-    // Optional design pattern for caching periodic reads to avoid hammering the
-    // HAL/CAN.
-    public void readPeriodicInputs()
-    {
-    }
-
-    // Optional design pattern for caching periodic writes to avoid hammering the
-    // HAL/CAN.
-    public void writePeriodicOutputs()
-    {
-    }
-
-    // public abstract boolean checkSystem();
-
-    // public abstract void outputTelemetry();
+    public abstract boolean checkSystem();
 
     public abstract void stop();
 
-    public void zeroSensors()
-    {
-    }
+    public void zeroSensors() {}
 
-    public void registerEnabledLoops(ILooper enabledLooper)
-    {
-    }
+    // Optional design patterns for caching periodic reads to avoid hammering the HAL/CAN.
+    public void getStatus() {}      // read status from sensors
+    public void sendCommands() {}   // send commands to effectors
+    
+    public abstract void outputTelemetry();
+    
+    public void writeToLog() {}
 }
