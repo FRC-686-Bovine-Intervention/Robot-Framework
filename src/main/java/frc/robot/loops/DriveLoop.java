@@ -234,23 +234,19 @@ public class DriveLoop implements Loop
 	}
 
 	@Override
-	public void onStart()
+	public void onStart(double timestamp)
 	{
 		// nothing
 	}
 
 	@Override
-	public void onLoop()
+	public void onLoop(double timestamp)
 	{
-		// get status from hardware
-		getStatus();
-
-		// send new commands to hardware
-		sendCommands();
+		// nothing
 	}
 
 	@Override
-	public void onStop()
+	public void onStop(double timestamp)
 	{
 		stopMotors();
 	}

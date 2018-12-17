@@ -56,13 +56,13 @@ public class Drive extends Subsystem
 	private final Loop velocityControlLoop = new Loop()
 	{
 		@Override
-		public void onStart()
+		public void onStart(double timestamp)
 		{
 			setOpenLoop(DriveCommand.COAST());
 		}
 
 		@Override
-		public void onLoop()
+		public void onLoop(double timestamp)
 		{
 			switch (driveCmd.getDriveControlMode())
 			{
@@ -87,7 +87,7 @@ public class Drive extends Subsystem
 		}
 
 		@Override
-		public void onStop()
+		public void onStop(double timestamp)
 		{
 			setOpenLoop(DriveCommand.COAST());
 		}

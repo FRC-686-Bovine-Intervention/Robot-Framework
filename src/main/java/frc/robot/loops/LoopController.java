@@ -24,7 +24,8 @@ public class LoopController
     private final Notifier notifier_; // the Notifier will run the function runCrashTracked() with a period of kPeriod
     private final List<Loop> loops_;
     private final Object taskRunningLock_ = new Object();
-    private double prev_time_ = 0;
+    private double timestamp_ = 0;
+    private double prev_timestamp_ = 0;
     protected double dt_;
 
     private final CrashTrackingRunnable runnable_ = new CrashTrackingRunnable()
@@ -37,13 +38,13 @@ public class LoopController
             {
                 if (running_)
                 {
-                    double curr_time = Timer.getFPGATimestamp();
+                    double timestamp_ = Timer.getFPGATimestamp();
                     for (Loop loop : loops_)
                     {
-                        loop.onLoop();
+                        loop.onLoop(timestamp_);
                     }
-                    dt_ = curr_time - prev_time_;
-                    prev_time_ = curr_time;
+                    dt_ = timestamp_ - prev_timestamp_;
+                    prev_timestamp_ = timestamp_;
                 }
             }
         }
@@ -73,11 +74,11 @@ public class LoopController
             // lock during access to loop_ to avoid corruption from multiple threads
             synchronized (taskRunningLock_)
             {
-                prev_time_ = Timer.getFPGATimestamp();
+                timestamp_ = Timer.getFPGATimestamp();
                 for (Loop loop : loops_)
                 {
                     System.out.println("Starting " + loop);
-                    loop.onStart();
+                    loop.onStart(timestamp_);
                 }
                 running_ = true;
             }
@@ -94,11 +95,12 @@ public class LoopController
             // lock during access to loop_ to avoid corruption from multiple threads
             synchronized (taskRunningLock_)
             {
+                timestamp_ = Timer.getFPGATimestamp();
                 running_ = false;
                 for (Loop loop : loops_)
                 {
                     System.out.println("Stopping " + loop);
-                    loop.onStop();
+                    loop.onStop(timestamp_);
                 }
             }
         }

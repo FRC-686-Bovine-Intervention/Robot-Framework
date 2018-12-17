@@ -20,7 +20,6 @@ public class SubsystemManager implements ILooper
         mAllSubsystems = allSubsystems;
     }
     
-    /*
     public void outputToSmartDashboard()
     {
         mAllSubsystems.forEach((s) -> s.outputTelemetry());
@@ -56,7 +55,7 @@ public class SubsystemManager implements ILooper
         {
             for (Subsystem s : mAllSubsystems)
             {
-                s.readPeriodicInputs();
+                s.getStatus();
             }
             for (Loop l : mLoops)
             {
@@ -64,7 +63,7 @@ public class SubsystemManager implements ILooper
             }
             for (Subsystem s : mAllSubsystems)
             {
-                s.writePeriodicOutputs();
+                s.sendCommands();
             }
         }
 
@@ -95,11 +94,12 @@ public class SubsystemManager implements ILooper
         {
             for (Subsystem s : mAllSubsystems)
             {
-                s.readPeriodicInputs();
+                s.getStatus();
             }
+            // unlike EnabledLoop, not running onLoop()
             for (Subsystem s : mAllSubsystems)
             {
-                s.writePeriodicOutputs();
+                s.sendCommands();
             }
         }
 
@@ -122,7 +122,6 @@ public class SubsystemManager implements ILooper
         // no subsystems are registered with the enabledLooper
         disabledLooper.register(new DisabledLoop());
     }
-*/
 
     @Override
     public void register(Loop loop)
