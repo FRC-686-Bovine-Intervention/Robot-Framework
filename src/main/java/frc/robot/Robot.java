@@ -7,153 +7,91 @@
 
 package frc.robot;
 
-import java.util.TimeZone;
-
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.auto.AutoModeExecuter;
+import frc.robot.auto.AutoModeSelector;
 import frc.robot.command_status.DriveCommand;
 import frc.robot.command_status.DriveState;
 import frc.robot.command_status.RobotState;
 import frc.robot.lib.joystick.ArcadeDriveJoystick;
+import frc.robot.lib.joystick.ButtonBoard;
 import frc.robot.lib.joystick.JoystickControlsBase;
+import frc.robot.lib.joystick.JoystickSelector;
+import frc.robot.lib.sensors.Limelight;
 import frc.robot.lib.util.CrashTracker;
-import frc.robot.lib.util.DataLogController;
-import frc.robot.lib.util.DataLogger;
 import frc.robot.lib.util.Pose;
 import frc.robot.loops.DriveLoop;
 import frc.robot.loops.LoopController;
 import frc.robot.loops.RobotStateLoop;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.ExampleMotionMagicSubsystem;
 import frc.robot.subsystems.Superstructure;
 
-public class Robot extends IterativeRobot {
 
-	PowerDistributionPanel pdp = new PowerDistributionPanel();
+public class Robot extends IterativeRobot
+{
+	private LoopController mEnabledLooper = new LoopController();
+	private LoopController mDisabledLooper = new LoopController();
+	JoystickControlsBase joystick = ArcadeDriveJoystick.getInstance();	// can be changed every teleopInit()
+	ButtonBoard buttonBoard = ButtonBoard.getInstance();
 
-	JoystickControlsBase controls = ArcadeDriveJoystick.getInstance();
+	// private final SubsystemManager subsystemManager = new SubsystemManager (
+	// 	Arrays.asList(
+	// 		RobotStateEstimator.getInstance(),
+	// 		Drive.getInstance(),
+	// 		Superstructure.getInstance(),
+	// 		Intake.getInstance(),
+	// 		Elevator.getInstance(),
+	// 		Infrastructure.getInstance()
+	// 	)
+	// );
 
-	RobotState robotState = RobotState.getInstance();
-	Drive drive = Drive.getInstance();
-	Superstructure superStructure = Superstructure.getInstance();
+    private AutoModeSelector autoModeSelector = AutoModeSelector.getInstance();
+    private JoystickSelector joystickSelector = JoystickSelector.getInstance();
 
-	AutoModeExecuter autoModeExecuter = null;
-
-	LoopController loopController;
-
-	SmartDashboardInteractions smartDashboardInteractions;
-	DataLogController robotLogger;
-
+	// Two camera options
+	Limelight limelight = new Limelight();
 	UsbCamera usbCamera;
 
-	
-	enum OperationalMode 
-    {
-    	DISABLED(0), AUTONOMOUS(1), TELEOP(2), TEST(3);
-    	
-    	private int val;
-    	
-    	private OperationalMode (int val) {this.val = val;}
-    	public int getVal() {return val;}
-    } 
-    
-    OperationalMode operationalMode = OperationalMode.DISABLED;
-    
-    public Robot() {
-    	CrashTracker.logRobotConstruction();
-    }
-    
-    
-	@Override
-	public void robotInit() {
-		try
-    	{
-    		CrashTracker.logRobotInit();
+	AutoModeExecuter autoModeExecuter = null;
+	LoopController loopController;
 
-    		usbCamera = CameraServer.getInstance().startAutomaticCapture("Intake Camera", 0);
-    		usbCamera.setResolution(320, 240);
-    		usbCamera.setFPS(15);
-    		// view camera at http://10.6.86.2:1181?action=stream
-    		// use Ctrl-+ to increase size to full screen
-    		
-    		loopController = new LoopController();
-    		loopController.register(drive.getVelocityPIDLoop());
-    		loopController.register(DriveLoop.getInstance());
-       		loopController.register(RobotStateLoop.getInstance());
-    		
-    		smartDashboardInteractions = new SmartDashboardInteractions();
-    		smartDashboardInteractions.initWithDefaults();
-    		
-    		// set datalogger and time info
-    		TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
-    		
-    		robotLogger = DataLogController.getRobotLogController();
-    		robotLogger.register(Drive.getInstance().getLogger());
-    		robotLogger.register(drive.getCommand().getLogger());
-    		robotLogger.register(DriveState.getInstance().getLogger());
-    		robotLogger.register(Superstructure.getInstance().getLogger());
-    		robotLogger.register(RobotState.getInstance().getLogger());
-    		
-    		setInitialPose(new Pose());
-
-
-    		
-    	}
-    	catch(Throwable t)
-    	{
-    		CrashTracker.logThrowableCrash(t);
-    		throw t;
-    	}
-	}
-	
-	public void setInitialPose (Pose _initialPose){
-		robotState.reset(Timer.getFPGATimestamp(), DriveState.getInstance().getLeftDistanceInches(), DriveState.getInstance().getRightDistanceInches(), _initialPose);
-    	System.out.println("InitialPose: " + _initialPose);
-    }
-    
-    public void zeroAllSensors()
-    {
-    	drive.zeroSensors();
-    	superStructure.zeroSensors();
-		// mSuperstructure.zeroSensors();
-    }
-    
-    public void stopAll()
-    {
-    	drive.stop();
-    	superStructure.stop();
-		// mSuperstructure.stop();
-    }
+	Superstructure superStructure = Superstructure.getInstance();
+	RobotState robotState = RobotState.getInstance();
+	Drive drive = Drive.getInstance();
+	ExampleMotionMagicSubsystem exampleMotionMagicSubsystem = ExampleMotionMagicSubsystem.getInstance(); 
 
 
 
-	/****************************************************************
-	 * DISABLED MODE
-	 ****************************************************************/
-
-	@Override
-	public void disabledInit()
+	public Robot()
 	{
-		operationalMode = OperationalMode.DISABLED;
-		boolean logToFile = true;
-		boolean logToSmartDashboard = true;
-		robotLogger.setOutputMode(logToFile, logToSmartDashboard);
+		CrashTracker.logRobotConstruction();
+	}
 
+	@Override
+	public void robotInit()
+	{
 		try
 		{
-			CrashTracker.logDisabledInit();
-			if (autoModeExecuter != null)
-			{
-				autoModeExecuter.stop();
-			}
-			autoModeExecuter = null;
+			CrashTracker.logRobotInit();
 
-			stopAll(); // stop all actuators
-			loopController.start();
+			usbCamera = CameraServer.getInstance().startAutomaticCapture("Intake Camera", 0);
+			usbCamera.setResolution(320, 240);
+			usbCamera.setFPS(15);
+			// view camera at http://10.6.86.2:1181?action=stream
+			// use Ctrl-+ to increase size to full screen
+
+			loopController = new LoopController();
+			loopController.register(drive.getVelocityPIDLoop());
+			loopController.register(DriveLoop.getInstance());
+			loopController.register(RobotStateLoop.getInstance());
+
+			setInitialPose(new Pose());
+
 		}
 		catch (Throwable t)
 		{
@@ -162,13 +100,129 @@ public class Robot extends IterativeRobot {
 		}
 	}
 
+	public void setInitialPose(Pose _initialPose)
+	{
+		robotState.reset(Timer.getFPGATimestamp(), DriveState.getInstance().getLeftDistanceInches(), 
+		                                           DriveState.getInstance().getRightDistanceInches(), _initialPose);
+		System.out.println("InitialPose: " + _initialPose);
+	}
+
+	public void zeroAllSensors()
+	{
+		drive.zeroSensors();
+		superStructure.zeroSensors();
+		// mSuperstructure.zeroSensors();
+	}
+
+	
+
+	/****************************************************************
+	 * DISABLED/AUTONOMOUS/TELEOP INITS
+	 ****************************************************************/
+
 	@Override
+	public void disabledInit() 
+	{
+		SmartDashboard.putString("Match Cycle", "DISABLED");
+		
+		try 
+		{
+			CrashTracker.logDisabledInit();
+			mEnabledLooper.stop();
+
+			// kill any autoModeExecuters
+			if (autoModeExecuter != null) {
+				autoModeExecuter.stop();
+			}
+			autoModeExecuter = null;
+
+			// zero subsystems if at limits
+			exampleMotionMagicSubsystem.zeroIfAtLimit();
+			   
+		   	mDisabledLooper.start();
+		}
+		catch (Throwable t)
+		{
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
+	}
+	
+	
+	@Override
+	public void autonomousInit()
+	{
+		SmartDashboard.putString("Match Cycle", "AUTONOMOUS");
+		
+		try
+		{
+			CrashTracker.logAutoInit();
+			mDisabledLooper.stop();
+			if (autoModeExecuter != null) {
+				autoModeExecuter.stop();
+			}
+			autoModeExecuter = null;
+
+			limelight.autoInit();
+			
+			autoModeExecuter = new AutoModeExecuter();
+			autoModeExecuter.setAutoMode(autoModeSelector.getAutoModeSelection());
+			
+			setInitialPose(autoModeExecuter.getAutoMode().getInitialPose());
+			
+			autoModeExecuter.start();
+			mEnabledLooper.start();			
+		}
+		catch (Throwable t)
+		{
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
+		
+	}
+	
+	@Override
+	public void teleopInit()
+	{
+		SmartDashboard.putString("Match Cycle", "AUTONOMOUS");
+		
+		try
+		{
+			CrashTracker.logTeleopInit();
+			mDisabledLooper.stop();
+			if (autoModeExecuter != null) {
+				autoModeExecuter.stop();
+			}
+			
+			limelight.teleopInit();
+			
+			// Select joystick control method
+			joystick = joystickSelector.getJoystickControlsMode();
+			
+			drive.setOpenLoop(DriveCommand.COAST());
+			mEnabledLooper.start();
+		}
+		catch (Throwable t)
+		{
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
+	}
+
+
+
+
+	/****************************************************************
+	 * DISABLED MODE
+	 ****************************************************************/
+
+	 @Override
 	public void disabledPeriodic()
 	{
 		try
 		{
-			stopAll(); // stop all actuators
-
+			limelight.disabledPeriodic();
+			
 			System.gc(); // runs garbage collector
 		}
 		catch (Throwable t)
@@ -177,104 +231,17 @@ public class Robot extends IterativeRobot {
 			throw t;
 		}
 	}
-
-
-
+	
 	/****************************************************************
 	 * AUTONOMOUS MODE
 	 ****************************************************************/
-
-	@Override
-	public void autonomousInit() {
-    	operationalMode = OperationalMode.AUTONOMOUS;
-    	boolean logToFile = true;
-    	boolean logToSmartDashboard = true;
-    	robotLogger.setOutputMode(logToFile, logToSmartDashboard);
-
-    	try
-    	{
-			superStructure.enable();
-
-			CrashTracker.logAutoInit();
-
-			if(autoModeExecuter != null){
-    			autoModeExecuter.stop();
-    		}
-    		autoModeExecuter = null;
-    		
-			autoModeExecuter = new AutoModeExecuter();
-			autoModeExecuter.setAutoMode( smartDashboardInteractions.getAutoModeSelection() );
-
-			setInitialPose( autoModeExecuter.getAutoMode().getInitialPose() );
- 
-			autoModeExecuter.start();
-    	}
-    	catch(Throwable t)
-    	{
-    		CrashTracker.logThrowableCrash(t);
-    		throw t;
-    	}
-		
-	}
-
-	@Override
-	public void autonomousPeriodic() {
-    	try
-    	{
-    		
-    	}
-    	catch (Throwable t)
-    	{
-    		CrashTracker.logThrowableCrash(t);
-    		throw t;
-    	}
-	}
-	
-	
-	/****************************************************************
-	 * TELEOP MODE
-	 ****************************************************************/
-
-	@Override
-	public void teleopInit(){
-		operationalMode = OperationalMode.TELEOP;
-		boolean logToFile = true;
-		boolean logToSmartDashboard = true;
-		robotLogger.setOutputMode(logToFile, logToSmartDashboard);
-
-		try 
-		{
-			CrashTracker.logTeleopInit();
-
-			// Select joystick control method
-			controls = smartDashboardInteractions.getJoystickControlsMode();
-
-			// Configure looper
-			loopController.start();
-			superStructure.enable();
-			
-			if(autoModeExecuter != null){
-    			autoModeExecuter.stop();
-    		}
-    		
-			drive.setOpenLoop(DriveCommand.COAST());
-		} 
-		catch (Throwable t) 
-		{
-			CrashTracker.logThrowableCrash(t);
-			throw t;
-		}
-	}
-	
-	int prevButtonBoardDirection = -1;
 	
 	@Override
-	public void teleopPeriodic() 
+	public void autonomousPeriodic()
 	{
 		try
 		{
-			DriveCommand driveCmd = controls.getDriveCommand();
-			drive.setOpenLoop(driveCmd);
+			// do nothing (AutoModeExecuter thread is operational)
 		}
 		catch (Throwable t)
 		{
@@ -283,6 +250,49 @@ public class Robot extends IterativeRobot {
 		}
 	}
 
+	/****************************************************************
+	 * TELEOP MODE
+	 ****************************************************************/
+
+	@Override
+	public void teleopPeriodic()
+	{
+		try
+		{
+			DriveCommand driveCmd = joystick.getDriveCommand();
+			drive.setOpenLoop(driveCmd);
+		}
+		catch (Throwable t)
+		{
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
+	}
+	
+	/****************************************************************
+	 * robotPeriodic
+	 * called after disabledPeriodic, autoPeriodic, and teleopPeriodic
+	 ****************************************************************/
+	
+	@Override
+	public void robotPeriodic()
+	{
+		outputToSmartDashboard();
+	}
+	
+	
+	
+	public void outputToSmartDashboard() 
+	{
+		RobotState.getInstance().outputToSmartDashboard();
+        Drive.getInstance().outputTelemetry();
+        //mAutoFieldState.outputToSmartDashboard();
+        //mAutoModeSelector.outputToSmartDashboard();
+        mEnabledLooper.outputToSmartDashboard();
+        // SmartDashboard.updateValues();
+    }
+	
+	
 
 
 	/****************************************************************
@@ -290,7 +300,7 @@ public class Robot extends IterativeRobot {
 	 ****************************************************************/
 
 	@Override
-	public void testInit() 
+	public void testInit()
 	{
 		loopController.start();
 	}
@@ -300,27 +310,5 @@ public class Robot extends IterativeRobot {
 	{
 		drive.testDriveSpeedControl();
 	}
-	
-	
-	// called after disabledPeriodic, autoPeriodic, and teleopPeriodic 
-	@Override
-	public void robotPeriodic()
-	{
-		robotLogger.log();
-	}
 
-
-	
-	
-	private final DataLogger logger = new DataLogger()
-    {
-        @Override
-        public void log()
-        {
-			put("OperationalMode", operationalMode.getVal());
-        }
-    };
-    
-    public DataLogger getLogger() { return logger; }
-}
-
+}	

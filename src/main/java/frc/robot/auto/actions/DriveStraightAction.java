@@ -13,7 +13,8 @@ import frc.robot.subsystems.*;
  * @see Drive
  * @see Rotation2d
  */
-public class DriveStraightAction implements Action {
+public class DriveStraightAction implements Action
+{
 
     private double startingDistance;
     private double mWantedDistance;
@@ -22,39 +23,40 @@ public class DriveStraightAction implements Action {
     private Drive mDrive = Drive.getInstance();
     private DriveState driveState = DriveState.getInstance();
 
-    public DriveStraightAction(double distance, double velocity) {
+    public DriveStraightAction(double distance, double velocity)
+    {
         this(distance, velocity, 0);
     }
 
-    public DriveStraightAction(double distance, double velocity, double headingDeg) {
+    public DriveStraightAction(double distance, double velocity, double headingDeg)
+    {
         mWantedDistance = distance;
         mVelocity = velocity;
         mHeadingDeg = headingDeg;
     }
 
     @Override
-    public void start() 
+    public void start()
     {
         startingDistance = getCurrentDistance();
         mDrive.setVelocityHeadingSetpoint(mVelocity, mHeadingDeg);
     }
 
     @Override
-    public void update() 
+    public void update()
     {
     }
 
     @Override
-    public boolean isFinished() 
+    public boolean isFinished()
     {
-    	System.out.printf("startingDistance=%7.3f, currDist=%7.3f, mWantedDistance=%7.3f\n", startingDistance, getCurrentDistance(), mWantedDistance);    	
-    	
+        System.out.printf("startingDistance=%7.3f, currDist=%7.3f, mWantedDistance=%7.3f\n", startingDistance,
+                getCurrentDistance(), mWantedDistance);
+
         boolean rv = false;
-        if (mWantedDistance > 0) 
-            rv = (getCurrentDistance() - startingDistance) >= mWantedDistance;
-        else
-            rv = (getCurrentDistance() - startingDistance) <= mWantedDistance;
-        
+        if (mWantedDistance > 0) rv = (getCurrentDistance() - startingDistance) >= mWantedDistance;
+        else rv = (getCurrentDistance() - startingDistance) <= mWantedDistance;
+
         return rv;
     }
 
@@ -64,29 +66,32 @@ public class DriveStraightAction implements Action {
         mDrive.setVelocitySetpoint(0, 0);
     }
 
-    private double getCurrentDistance() 
+    private double getCurrentDistance()
     {
         return (driveState.getLeftDistanceInches() + driveState.getRightDistanceInches()) / 2;
     }
-    
-	private final DataLogger logger = new DataLogger()
+
+    private final DataLogger logger = new DataLogger()
     {
         @Override
         public void log()
         {
-    		put("AutoAction", "DriveStraight" );
-			put("DriveCmd/talonMode", driveState.getTalonControlMode().toString() );
-			put("DriveCmd/left", mDrive.getCommand().getLeftMotor() );
-			put("DriveCmd/right", mDrive.getCommand().getRightMotor() );
-    		put("DriveState/TalonControlMode", driveState.getTalonControlMode().toString() );
-			put("DriveState/lSpeed", driveState.getLeftSpeedInchesPerSec() );
-			put("DriveState/rSpeed", driveState.getRightSpeedInchesPerSec() );
-    		put("DriveState/lDistance", driveState.getLeftDistanceInches() );
-    		put("DriveState/rDistance", driveState.getRightDistanceInches() );
-    		put("DriveState/Heading", driveState.getHeadingDeg() );
-	    }
+            put("AutoAction", "DriveStraight");
+            put("DriveCmd/talonMode", driveState.getTalonControlMode().toString());
+            put("DriveCmd/left", mDrive.getCommand().getLeftMotor());
+            put("DriveCmd/right", mDrive.getCommand().getRightMotor());
+            put("DriveState/TalonControlMode", driveState.getTalonControlMode().toString());
+            put("DriveState/lSpeed", driveState.getLeftSpeedInchesPerSec());
+            put("DriveState/rSpeed", driveState.getRightSpeedInchesPerSec());
+            put("DriveState/lDistance", driveState.getLeftDistanceInches());
+            put("DriveState/rDistance", driveState.getRightDistanceInches());
+            put("DriveState/Heading", driveState.getHeadingDeg());
+        }
     };
-	
-    public DataLogger getLogger() { return logger; }
-    
+
+    public DataLogger getLogger()
+    {
+        return logger;
+    }
+
 }

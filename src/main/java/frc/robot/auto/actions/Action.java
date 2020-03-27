@@ -9,7 +9,7 @@ import frc.robot.lib.util.DataLogger;
  *
  * @see frc.robot2017.auto.AutoModeBase#runAction
  */
-public interface Action 
+public interface Action
 {
     /**
      * Run code once when the action is started, for set up
@@ -24,8 +24,8 @@ public interface Action
 
     /**
      * Returns whether or not the code has finished execution. When implementing
-     * this interface, this method is used by the runAction method every cycle
-     * to know when to stop running the action
+     * this interface, this method is used by the runAction method every cycle to
+     * know when to stop running the action
      * 
      * @return boolean
      */

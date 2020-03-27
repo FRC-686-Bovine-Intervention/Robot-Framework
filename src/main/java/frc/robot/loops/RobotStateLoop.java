@@ -1,6 +1,5 @@
 package frc.robot.loops;
 
-
 import frc.robot.command_status.DriveState;
 import frc.robot.command_status.RobotState;
 
@@ -11,53 +10,54 @@ import edu.wpi.first.wpilibj.Timer;
  * traveled (compares two waypoints), gyroscope orientation, and velocity, among
  * various other factors. Similar to a car's odometer.
  */
-public class RobotStateLoop implements Loop 
+public class RobotStateLoop implements Loop
 {
- 	// singleton class
-	 private static RobotStateLoop instance = null;
-	 public static RobotStateLoop getInstance() 
-	 { 
-		 if (instance == null) {
-			 instance = new RobotStateLoop();
-		 }
-		 return instance;
-	 }
+    // singleton class
+    private static RobotStateLoop instance = null;
+
+    public static RobotStateLoop getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new RobotStateLoop();
+        }
+        return instance;
+    }
 
     RobotState robotState;
     DriveState driveState;
-    
-    RobotStateLoop() 
+
+    RobotStateLoop()
     {
         robotState = RobotState.getInstance();
         driveState = DriveState.getInstance();
     }
-    
-
 
     @Override
-    public void onStart() 
+    public void onStart(double timestamp)
     {
-    	robotState.setPrevEncoderDistance(driveState.getLeftDistanceInches(), driveState.getRightDistanceInches());
+        robotState.setPrevEncoderDistance(driveState.getLeftDistanceInches(), driveState.getRightDistanceInches());
     }
 
     @Override
-    public void onLoop() 
+    public void onLoop(double timestamp)
     {
-    	// the following DriveState elements are set during DriveLoop, called just previous to RobotStateLoop,
-    	// and in the same LoopController thread
-    	
-        double time      = Timer.getFPGATimestamp();
+        // the following DriveState elements are set during DriveLoop, called just
+        // previous to RobotStateLoop,
+        // and in the same LoopController thread
+
+        double time = Timer.getFPGATimestamp();
         double lDistance = driveState.getLeftDistanceInches();
         double rDistance = driveState.getRightDistanceInches();
-        double lSpeed    = driveState.getLeftSpeedInchesPerSec();
-        double rSpeed    = driveState.getRightSpeedInchesPerSec(); 
+        double lSpeed = driveState.getLeftSpeedInchesPerSec();
+        double rSpeed = driveState.getRightSpeedInchesPerSec();
         double gyroAngle = driveState.getHeading();
 
         robotState.generateOdometryFromSensors(time, lDistance, rDistance, lSpeed, rSpeed, gyroAngle);
     }
 
     @Override
-    public void onStop() 
+    public void onStop(double timestamp)
     {
         // no-op
     }

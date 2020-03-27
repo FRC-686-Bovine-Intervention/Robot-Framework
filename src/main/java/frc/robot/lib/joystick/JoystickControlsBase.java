@@ -7,20 +7,23 @@ import edu.wpi.first.wpilibj.Joystick;
 /**
  * An abstract class that forms the base of joystick controls.
  */
-public abstract class JoystickControlsBase 
+public abstract class JoystickControlsBase
 {
     protected final Joystick mStick;
 
-    public static double kJoystickDeadzone = 0.2;   // deadzone at center of joystick extends from +/-kJoystickDeadzone
+    public static double kJoystickDeadzone = 0.2; // deadzone at center of joystick extends from +/-kJoystickDeadzone
 
-    protected JoystickControlsBase() 
+    protected JoystickControlsBase()
     {
         mStick = new Joystick(0);
     }
 
     // DRIVER CONTROLS
-    public abstract DriveCommand getDriveCommand();	// mapping from joystick controls to DriveSignal
-    
-    public boolean getButton(int _num) { return mStick.getRawButton(_num); }
-    
+    public abstract DriveCommand getDriveCommand(); // mapping from joystick controls to DriveSignal
+
+    public boolean getButton(int _num)
+    {
+        return mStick.getRawButton(_num);
+    }
+
 }

@@ -1,7 +1,5 @@
 package frc.robot.auto;
 
-
-
 import frc.robot.Constants;
 import frc.robot.auto.actions.Action;
 import frc.robot.lib.util.DataLogController;
@@ -18,19 +16,19 @@ public abstract class AutoModeBase
     protected double updatePeriod = Constants.kLoopDt;
     protected boolean active = false;
     protected Pose initialPose = new Pose();
-    
+
     static DataLogController autoLogger = DataLogController.getAutoLogController();
-    
+
     protected abstract void routine() throws AutoModeEndedException;
 
-    public void run() 
+    public void run()
     {
         active = true;
-        try 
+        try
         {
             routine();
-        } 
-        catch (AutoModeEndedException e) 
+        }
+        catch (AutoModeEndedException e)
         {
             System.out.println("Auto mode done, ended early");
             return;
@@ -39,65 +37,64 @@ public abstract class AutoModeBase
         System.out.println("Auto mode done");
     }
 
-    public void done() 
+    public void done()
     {
         active = false;
     }
 
-    public void stop() 
+    public void stop()
     {
         active = false;
     }
 
-    public boolean isActive() 
+    public boolean isActive()
     {
         return active;
     }
 
-    public boolean isActiveWithThrow() throws AutoModeEndedException 
+    public boolean isActiveWithThrow() throws AutoModeEndedException
     {
-        if (!isActive()) 
+        if (!isActive())
         {
             throw new AutoModeEndedException();
         }
         return isActive();
     }
 
-    public void runAction(Action action) throws AutoModeEndedException 
+    public void runAction(Action action) throws AutoModeEndedException
     {
-        autoLogger.deregister();						// remove previous action loggers from registry
+        autoLogger.deregister(); // remove previous action loggers from registry
         autoLogger.register(action.getLogger());
         autoLogger.setOutputMode(true, true);
-        
+
         action.start();
-        while (isActiveWithThrow() && !action.isFinished()) 
+        while (isActiveWithThrow() && !action.isFinished())
         {
-        	double currTime = Timer.getFPGATimestamp();
-        	double nextTime = Timer.getFPGATimestamp() + updatePeriod;
-        	
+            double currTime = Timer.getFPGATimestamp();
+            double nextTime = Timer.getFPGATimestamp() + updatePeriod;
+
             action.update();
             autoLogger.log();
 
-        	currTime = Timer.getFPGATimestamp();
-            long waitTime = (long) ((nextTime-currTime) * 1000.0);	// attempt to run thread every updatePeriod seconds
-            waitTime = Math.max(waitTime, 0);						// avoid negative waits
+            currTime = Timer.getFPGATimestamp();
+            long waitTime = (long) ((nextTime - currTime) * 1000.0); // attempt to run thread every updatePeriod seconds
+            waitTime = Math.max(waitTime, 0); // avoid negative waits
             try
             {
                 Thread.sleep(waitTime);
-            } 
-            catch (InterruptedException e) 
+            }
+            catch (InterruptedException e)
             {
                 e.printStackTrace();
             }
         }
         action.done();
-        autoLogger.log();	// capture one last log
+        autoLogger.log(); // capture one last log
     }
 
     public Pose getInitialPose()
     {
-    	return initialPose;	// default implementation
+        return initialPose; // default implementation
     }
-    
-    
+
 }
