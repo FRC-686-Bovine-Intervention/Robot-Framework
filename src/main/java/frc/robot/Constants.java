@@ -106,8 +106,11 @@ public class Constants
     public static double kDriveWatchdogTimerThreshold = 0.500;
     public static final int kCANTimeoutMs = 10;         // ms, use for on the fly updates
     public static final int kLongCANTimeoutMs = 100;    // ms, use for constructors
+    public static double kTalonFramePeriod = 0.1;       // sec
+
 
     public static int kTalonPidIdx = 0; // 0 for primary closed-loop PIDs, 1 for auxiliary closed-loop PIDs
+    public static int kTalonFXPidIdx = 1; // 0 for primary closed-loop PIDs, 1 for auxiliary closed-loop PIDs
 
     public static double kNominalBatteryVoltage = 12.0;
 
