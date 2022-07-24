@@ -34,13 +34,13 @@ public class RobotStateLoop implements Loop
     }
 
     @Override
-    public void onStart(double timestamp)
+    public void onStart()
     {
         robotState.setPrevEncoderDistance(driveState.getLeftDistanceInches(), driveState.getRightDistanceInches());
     }
 
     @Override
-    public void onLoop(double timestamp)
+    public void onLoop()
     {
         // the following DriveState elements are set during DriveLoop, called just
         // previous to RobotStateLoop,
@@ -57,7 +57,7 @@ public class RobotStateLoop implements Loop
     }
 
     @Override
-    public void onStop(double timestamp)
+    public void onStop()
     {
         // no-op
     }

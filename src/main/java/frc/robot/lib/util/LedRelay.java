@@ -9,9 +9,5 @@ public class LedRelay
 	public static int kLedRelayPort = 1;
 
 	public static Relay instance = new Relay(kLedRelayPort, Relay.Direction.kForward);
-
-	public static Relay getInstance()
-	{
-		return instance;
-	}
+	public static Relay getInstance() { return instance; }
 }

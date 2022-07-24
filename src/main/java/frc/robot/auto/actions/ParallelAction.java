@@ -3,36 +3,34 @@ package frc.robot.auto.actions;
 import java.util.ArrayList;
 import java.util.List;
 
-import frc.robot.lib.util.DataLogger;
-
 /**
  * Composite action, running all sub-actions at the same time All actions are
  * started then updated until all actions report being done.
  * 
  * @param A
- *              List of Action objects
+ *            List of Action objects
  */
-public class ParallelAction implements Action
+public class ParallelAction implements Action 
 {
 
-    private final ArrayList<Action> mActions;
-
-    public ParallelAction(List<Action> actions)
+	private final ArrayList<Action> mActions;
+    
+    public ParallelAction(List<Action> actions) 
     {
         mActions = new ArrayList<>(actions.size());
-        for (Action action : actions)
+        for (Action action : actions) 
         {
             mActions.add(action);
         }
     }
 
     @Override
-    public boolean isFinished()
+    public boolean isFinished() 
     {
         boolean all_finished = true;
         for (Action action : mActions)
         {
-            if (!action.isFinished())
+            if (!action.isFinished()) 
             {
                 all_finished = false;
             }
@@ -41,47 +39,29 @@ public class ParallelAction implements Action
     }
 
     @Override
-    public void update()
+    public void run() 
     {
         for (Action action : mActions)
         {
-            action.update();
+            action.run();
         }
     }
 
     @Override
-    public void done()
+    public void done() 
     {
-        for (Action action : mActions)
+        for (Action action : mActions) 
         {
             action.done();
         }
     }
 
     @Override
-    public void start()
+    public void start() 
     {
-        for (Action action : mActions)
+        for (Action action : mActions) 
         {
             action.start();
         }
     }
-
-    private final DataLogger logger = new DataLogger()
-    {
-        @Override
-        public void log()
-        {
-            for (Action action : mActions)
-            {
-                action.getLogger().log();
-            }
-        }
-    };
-
-    public DataLogger getLogger()
-    {
-        return logger;
-    }
-
 }

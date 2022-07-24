@@ -7,17 +7,17 @@ import java.util.ArrayList;
  */
 
 @SuppressWarnings("serial")
-public class CircularList<E> extends ArrayList<E>
+public class CircularList<E> extends ArrayList<E> 
 {
 	private int idx = 0;
-
-	public E getNext()
+	
+	public E getNext() 
 	{
 		return get(idx + 1);
 	}
-
-	@Override
-	public E get(int index)
+	
+    @Override
+	public E get(int index) 
 	{
 		idx = index % size();
 		return super.get(idx);

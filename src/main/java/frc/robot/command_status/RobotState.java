@@ -1,5 +1,6 @@
 package frc.robot.command_status;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.lib.util.InterpolatingDouble;
 import frc.robot.lib.util.InterpolatingTreeMap;
@@ -95,6 +96,26 @@ public class RobotState
 
         setPrevEncoderDistance(_lEncoderDistance, _rEncoderDistance);
     }
+
+    public synchronized void reset(Pose _newPose)
+	{
+		double currentTime = Timer.getFPGATimestamp();
+		DriveState driveState = DriveState.getInstance();
+
+		// calibrate initial position to initial pose (set by autonomous mode)
+		fieldToRobot = new InterpolatingTreeMap<>(kObservationBufferSize);
+		fieldToRobot.put(new InterpolatingDouble(currentTime), _newPose);
+
+		// calculate gyro heading correction for the desired initial pose (as set by autonomous mode)
+		double desiredHeading = _newPose.getHeading();
+		double gyroHeading = driveState.getHeading();
+		gyroCorrection = gyroHeading - desiredHeading; 	// subtract gyroCorrection from actual gyro heading to get
+														// desired orientation
+
+		robotSpeed = new Kinematics.LinearAngularSpeed(0, 0);
+
+		setPrevEncoderDistance(driveState.getLeftDistanceInches(), driveState.getRightDistanceInches());
+	}
 
     public void setPrevEncoderDistance(double _lPrevDistance, double _rPrevDistance)
     {
