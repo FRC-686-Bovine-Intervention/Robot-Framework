@@ -1,24 +1,16 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import frc.robot.loops.Loop;
 import frc.robot.subsystems.Status.EnabledState;
 
-public class ExampleStatusLoop implements Loop{
-    private ExampleStatus status = ExampleStatus.getInstance();
-    private ShuffleboardTab tab = Shuffleboard.getTab("Example");
-    private NetworkTableEntry enabledEntry = tab.add("Enable", true).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+public abstract class Loop {
+    protected Status status;
+    protected ShuffleboardTab tab;
+    protected NetworkTableEntry enabledEntry;
 
-    @Override
-    public void onStart() {
-        
-    }
-
-    @Override
-    public void onLoop() {
+    public void onLoop()
+    {
         switch(status.Enabled)
         {
             case Starting:
@@ -40,10 +32,20 @@ public class ExampleStatusLoop implements Loop{
                 }
             break;
         }
+        switch(status.Enabled)
+        {
+            case Starting:
+            case Enabled:
+                Enabled();
+            break;
+            case Stopping:
+            case Disabled:
+                Disabled();
+            break;
+        }
+        Update();
     }
-
-    @Override
-    public void onStop() {
-        
-    }
+    public abstract void Enabled();
+    public abstract void Disabled();
+    public abstract void Update();
 }
