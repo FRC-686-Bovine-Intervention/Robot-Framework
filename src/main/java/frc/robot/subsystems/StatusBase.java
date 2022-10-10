@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-public abstract class Status {
+public class StatusBase {
     public enum EnabledState
     {
         Starting(true),
@@ -13,5 +13,5 @@ public abstract class Status {
             this.IsInitState = IsInitState;
         }
     }
-    public EnabledState Enabled = EnabledState.Starting;
+    public EnabledState Enabled = EnabledState.Disabled;
 }

@@ -17,7 +17,7 @@ public class SubsystemController
 
     private final Notifier notifier_;	// the Notifier will run the function runCrashTracked() with a period of kPeriod
     
-    private final List<Subsystem> subsystems_;
+    private final List<SubsystemBase> subsystems_;
     private final Object taskRunningLock_ = new Object();
     private double prev_time_ = 0;
 	protected double dt_;
@@ -33,7 +33,7 @@ public class SubsystemController
                 if (running_) 
                 {
                     double curr_time = Timer.getFPGATimestamp();
-                    for (Subsystem subs : subsystems_) 
+                    for (SubsystemBase subs : subsystems_) 
                     {
                         subs.loop.onLoop();
                     }
@@ -51,7 +51,7 @@ public class SubsystemController
         subsystems_ = new ArrayList<>();
     }
 
-    public synchronized void register(Subsystem subsystem) 
+    public synchronized void register(SubsystemBase subsystem) 
     {
     	// lock during access to loop_ to avoid corruption from multiple threads
         synchronized (taskRunningLock_) 
@@ -69,7 +69,7 @@ public class SubsystemController
             synchronized (taskRunningLock_) 
             {
                 prev_time_ = Timer.getFPGATimestamp();
-                for (Subsystem subs : subsystems_) 
+                for (SubsystemBase subs : subsystems_) 
                 {
 //                    System.out.println("Starting " + loop);
                     subs.loop.onStart();
@@ -79,21 +79,6 @@ public class SubsystemController
             // avoiding watchdog errors
             notifier_.startPeriodic(kPeriod);
         }
-    }
-
-    public synchronized void run() 
-    {
-        // if (!running_) 
-        // {
-        // 	// lock during access to loop_ to avoid corruption from multiple threads
-        //     synchronized (taskRunningLock_) 
-        //     {
-        //         for (Loop loop : loops_) 
-        //         {
-        //             loop.onLoop();
-        //         }
-        //     }
-        // }
     }
 
     public synchronized void stop() 
@@ -106,10 +91,10 @@ public class SubsystemController
             synchronized (taskRunningLock_) 
             {
                 running_ = false;
-                for (Subsystem subs : subsystems_) 
+                for (SubsystemBase subs : subsystems_) 
                 {
 //                    System.out.println("Stopping " + loop);
-                    subs.onStop();
+                    subs.loop.onStop();
                 }
             }
         }
