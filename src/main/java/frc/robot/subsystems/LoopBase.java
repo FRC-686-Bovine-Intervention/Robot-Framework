@@ -1,17 +1,20 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.StatusBase.EnabledState;
 
 public abstract class LoopBase {
+    //TODO: Update documentation
     /**
      * <h3>MUST BE SET IN SUBCLASSES</h3><p>
      * Allows the default enabled status code to run<p>
-     * Recommended that you set it to a subclass of {@link StatusBase}, but can be set to {@link StatusBase} as a default
+     * Recommended that you set it to a subclass of {@link SubsystemBase}, but can be set to {@link SubsystemBase} as a default
      */
-    protected StatusBase _status;
+    protected SubsystemBase _Subsystem;
     /**
      * Allows subclasses to have cleaner code by not having to initialize a tab<p>
      * Might get removed
@@ -28,8 +31,8 @@ public abstract class LoopBase {
      */
     public void onStart()
     {
-        if (_status == null) {throw new NullPointerException(this.getClass().getName() + " has not defined the super variable _status\n");}
-        _status.Enabled = EnabledState.Starting;
+        if (_Subsystem == null) {throw new NullPointerException(this.getClass().getName() + " has not defined the super variable _Subsystem\n");}
+        _Subsystem.status.Enabled = EnabledState.Starting;
         onEverything();
     }
     /**
@@ -38,51 +41,51 @@ public abstract class LoopBase {
      */
     public void onLoop()
     {
-        if (_status == null) {throw new NullPointerException(this.getClass().getName() + " has not defined the super variable _status\n");}
+        if (_Subsystem.status == null) {throw new NullPointerException(this.getClass().getName() + " has not defined the super variable _Subsystem\n");}
         if(enabledEntry == null)
         {
-            switch(_status.Enabled)
+            switch(_Subsystem.status.Enabled)
             {
                 case Starting:
-                    _status.Enabled = EnabledState.Enabled;
+                    _Subsystem.status.Enabled = EnabledState.Enabled;
                 break;
                 case Enabled:
                     if(DriverStation.isDisabled())
                     {
-                        _status.Enabled = EnabledState.Stopping;
+                        _Subsystem.status.Enabled = EnabledState.Stopping;
                     }
                 break;
                 case Stopping:
-                    _status.Enabled = EnabledState.Disabled;
+                    _Subsystem.status.Enabled = EnabledState.Disabled;
                 break;
                 case Disabled:
                     if(DriverStation.isEnabled())
                     {
-                        _status.Enabled = EnabledState.Starting;
+                        _Subsystem.status.Enabled = EnabledState.Starting;
                     }
                 break;
             }
         }
         else
         {
-            switch(_status.Enabled)
+            switch(_Subsystem.status.Enabled)
             {
                 case Starting:
-                    _status.Enabled = EnabledState.Enabled;
+                    _Subsystem.status.Enabled = EnabledState.Enabled;
                 break;
                 case Enabled:
                     if(DriverStation.isDisabled() || !enabledEntry.getBoolean(true))
                     {
-                        _status.Enabled = EnabledState.Stopping;
+                        _Subsystem.status.Enabled = EnabledState.Stopping;
                     }
                 break;
                 case Stopping:
-                    _status.Enabled = EnabledState.Disabled;
+                    _Subsystem.status.Enabled = EnabledState.Disabled;
                 break;
                 case Disabled:
                     if(DriverStation.isEnabled() && enabledEntry.getBoolean(true))
                     {
-                        _status.Enabled = EnabledState.Starting;
+                        _Subsystem.status.Enabled = EnabledState.Starting;
                     }
                 break;
             }
@@ -95,14 +98,16 @@ public abstract class LoopBase {
      */
     public void onStop()
     {
-        _status.Enabled = EnabledState.Stopping;
+        _Subsystem.status.Enabled = EnabledState.Stopping;
         onEverything();
     }
 
     private void onEverything()
     {
+        UpdateStatus();
+        Logger.getInstance().processInputs(_Subsystem.getClass().toString(), _Subsystem.status);
         Update();
-        switch(_status.Enabled)
+        switch(_Subsystem.status.Enabled)
         {
             case Starting:
             case Enabled:
@@ -113,6 +118,7 @@ public abstract class LoopBase {
                 Disabled();
             break;
         }
+        _Subsystem.status.recordOutputs();
     }
 
     /**
@@ -133,4 +139,9 @@ public abstract class LoopBase {
      * This should be for things like updating Shuffleboard
      */
     public abstract void Update();
+    /**
+     * <h3>Runs every loop tick</h3><p>
+     * Code here should be updating the status's inputs to be logged to AdvantageKit<p>
+     */
+    public abstract void UpdateStatus();
 }
