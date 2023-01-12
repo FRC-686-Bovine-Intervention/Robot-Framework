@@ -191,19 +191,19 @@ public class OdometryStatus extends StatusBase
     // }
 
     @Override
-    public void exportToTable(LogTable table) {
+    public void exportToTable(LogTable table, String prefix) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void importFromTable(LogTable table) {
+    public void importFromTable(LogTable table, String prefix) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void recordOutputs() {
+    public void recordOutputs(String prefix) {
         // TODO Auto-generated method stub
         
     }

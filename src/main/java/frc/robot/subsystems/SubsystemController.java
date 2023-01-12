@@ -29,10 +29,10 @@ public class SubsystemController implements Loggable
         for (SubsystemBase sub : subsystems)
         {
             sub.init();
-            sub.status.updateInputs();
+            sub.status.inputs();
             Logger.getInstance().processInputs(sub.getClass().getName(), sub.status);
             sub.loop.onStart();
-            sub.status.recordOutputs();
+            sub.status.record();
         }
         return this;
     }
@@ -41,10 +41,10 @@ public class SubsystemController implements Loggable
     {
         for (SubsystemBase sub : subsystems)
         {
-            sub.status.updateInputs();
-            Logger.getInstance().processInputs(sub.getClass().getName(), sub.status);
+            sub.status.inputs();
+            Logger.getInstance().processInputs(sub.getClass().getSimpleName(), sub.status);
             sub.loop.onLoop();
-            sub.status.recordOutputs();
+            sub.status.record();
         }
         return this;
     }
@@ -53,10 +53,10 @@ public class SubsystemController implements Loggable
     {
         for (SubsystemBase sub : subsystems)
         {
-            sub.status.updateInputs();
+            sub.status.inputs();
             Logger.getInstance().processInputs(sub.getClass().getName(), sub.status);
             sub.loop.onStop();
-            sub.status.recordOutputs();
+            sub.status.record();
         }
         return this;
     }

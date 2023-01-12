@@ -43,7 +43,7 @@ public class TestBoardLoop extends LoopBase {
         // motorVoltageEntry = tab.add("Voltage", -686).getEntry();
         // motorCurrentEntry = tab.add("Current", -686).getEntry();
 
-        _Subsystem = testBoard;
+        Subsystem = testBoard;
     }
 
     @Override
