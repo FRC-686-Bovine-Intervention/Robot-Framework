@@ -206,5 +206,11 @@ public class OdometryStatus extends StatusBase
     public void recordOutputs() {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public void updateInputs() {
+        // TODO Auto-generated method stub
+        
     };
 }

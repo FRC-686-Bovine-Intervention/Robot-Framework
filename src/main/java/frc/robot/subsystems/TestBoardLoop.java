@@ -75,10 +75,4 @@ public class TestBoardLoop extends LoopBase {
         // motorVoltageEntry.setDouble(status.getOutputVoltage());
         // motorCurrentEntry.setDouble(status.getStatorCurrent());
     }
-
-    @Override
-    public void UpdateStatus() {
-        status.setOutputVoltage(HAL.getMotorOutputVoltage());
-        status.setStatorCurrent(HAL.getStatorCurrent());
-    }
 }

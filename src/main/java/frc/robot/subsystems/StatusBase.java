@@ -49,5 +49,6 @@ public abstract class StatusBase implements LoggableInputs, Loggable{
     }
     public abstract void exportToTable(LogTable table);
     public abstract void importFromTable(LogTable table);
+    public abstract void updateInputs();
     public abstract void recordOutputs();
 }

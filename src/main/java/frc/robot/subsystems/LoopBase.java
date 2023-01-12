@@ -1,14 +1,11 @@
 package frc.robot.subsystems;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.StatusBase.EnabledState;
-import io.github.oblarg.oblog.Loggable;
 
-public abstract class LoopBase implements Loggable {
+public abstract class LoopBase {
     //TODO: Update documentation
     /**
      * <h3>MUST BE SET IN SUBCLASSES</h3><p>
@@ -105,8 +102,6 @@ public abstract class LoopBase implements Loggable {
 
     private void onEverything()
     {
-        UpdateStatus();
-        Logger.getInstance().processInputs(_Subsystem.getClass().toString(), _Subsystem.status);
         Update();
         switch(_Subsystem.status.Enabled)
         {
@@ -140,9 +135,4 @@ public abstract class LoopBase implements Loggable {
      * This should be for things like updating Shuffleboard
      */
     public abstract void Update();
-    /**
-     * <h3>Runs every loop tick</h3><p>
-     * Code here should be updating the status's inputs to be logged to AdvantageKit<p>
-     */
-    public abstract void UpdateStatus();
 }

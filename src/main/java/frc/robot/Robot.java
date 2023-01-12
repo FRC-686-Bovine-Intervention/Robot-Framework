@@ -35,12 +35,12 @@ public class Robot extends LoggedRobot {
 
     Logger.getInstance().start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
 
-    io.github.oblarg.oblog.Logger.configureLoggingAndConfig(this, false);
-
+    
     OdometryStatus.getInstance().setReal(isReal());
-
+    
     subsystemController.register(TestBoard.getInstance());
     subsystemController.start();
+    io.github.oblarg.oblog.Logger.configureLoggingAndConfig(this, false);
   }
 
   @Override

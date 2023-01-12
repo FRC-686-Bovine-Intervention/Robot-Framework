@@ -10,11 +10,13 @@ public class TestBoardStatus extends StatusBase {
     private static TestBoardStatus instance;
     public static TestBoardStatus getInstance() {if(instance == null){instance = new TestBoardStatus();} return instance;}
 
+    private final TestBoardHAL HAL = TestBoardHAL.getInstance();
+
     private TestBoardState state;
 
-    @Log
+    @Log(name = "Stator Current",tabName = "Test Board",columnIndex = 9,rowIndex = 0)
     private double motorStatorCurrent;
-    @Log
+    @Log(name = "Output Voltage",tabName = "Test Board",columnIndex = 0,rowIndex = 3)
     private double motorOutputVoltage;
 
     public double getStatorCurrent() {return motorStatorCurrent;}
@@ -52,5 +54,10 @@ public class TestBoardStatus extends StatusBase {
     public void recordOutputs() {
         Logger.getInstance().recordOutput("TestBoard/Outputs/State", state.name());
         Logger.getInstance().recordOutput("TestBoard/Outputs/Motor Setpoint", state.motorPower);
+    }
+    @Override
+    public void updateInputs() {
+        setOutputVoltage(HAL.getMotorOutputVoltage());
+        setStatorCurrent(HAL.getStatorCurrent());
     }
 }

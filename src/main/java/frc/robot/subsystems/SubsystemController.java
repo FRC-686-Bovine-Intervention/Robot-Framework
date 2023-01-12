@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 
+import org.littletonrobotics.junction.Logger;
+
 import io.github.oblarg.oblog.Loggable;
 
 public class SubsystemController implements Loggable
@@ -24,28 +26,37 @@ public class SubsystemController implements Loggable
 
     public SubsystemController start()
     {
-        for (SubsystemBase subs : subsystems)
+        for (SubsystemBase sub : subsystems)
         {
-            subs.init();
-            subs.loop.onStart();
+            sub.init();
+            sub.status.updateInputs();
+            Logger.getInstance().processInputs(sub.getClass().getName(), sub.status);
+            sub.loop.onStart();
+            sub.status.recordOutputs();
         }
         return this;
     }
     
     public SubsystemController run()
     {
-        for (SubsystemBase subs : subsystems)
+        for (SubsystemBase sub : subsystems)
         {
-            subs.loop.onLoop();
+            sub.status.updateInputs();
+            Logger.getInstance().processInputs(sub.getClass().getName(), sub.status);
+            sub.loop.onLoop();
+            sub.status.recordOutputs();
         }
         return this;
     }
 
     public SubsystemController stop()
     {
-        for (SubsystemBase subs : subsystems)
+        for (SubsystemBase sub : subsystems)
         {
-            subs.loop.onStop();
+            sub.status.updateInputs();
+            Logger.getInstance().processInputs(sub.getClass().getName(), sub.status);
+            sub.loop.onStop();
+            sub.status.recordOutputs();
         }
         return this;
     }
