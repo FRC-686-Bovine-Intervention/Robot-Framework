@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
-import frc.robot.loops.OdometryStatus;
+import edu.wpi.first.wpilibj.RobotBase;
 
 public class TestBoardHAL extends HALBase {
     private static TestBoardHAL instance;
@@ -15,7 +15,7 @@ public class TestBoardHAL extends HALBase {
 
     private TestBoardHAL()
     {
-        if(OdometryStatus.getInstance().getReal())
+        if(RobotBase.isReal())
         {
             LeftMotor = new TalonFX(5); 
             RightMotor = null;//new TalonFX(Constants.kRightClimberID);

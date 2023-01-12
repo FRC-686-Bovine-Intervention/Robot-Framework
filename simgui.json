@@ -16,6 +16,11 @@
         "open": true
       },
       "open": true
+    },
+    "transitory": {
+      "Shuffleboard": {
+        "open": true
+      }
     }
   },
   "Plot": {
