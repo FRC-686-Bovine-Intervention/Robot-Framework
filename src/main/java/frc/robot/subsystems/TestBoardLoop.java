@@ -1,8 +1,6 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 public class TestBoardLoop extends LoopBase {
     private static TestBoardLoop instance;
@@ -12,9 +10,9 @@ public class TestBoardLoop extends LoopBase {
     private final TestBoardStatus status;
     private final TestBoardHAL HAL;
 
-    private final NetworkTableEntry stateEntry;
-    private final NetworkTableEntry motorVoltageEntry;
-    private final NetworkTableEntry motorCurrentEntry;
+    // private final GenericEntry stateEntry;
+    // private final GenericEntry motorVoltageEntry;
+    // private final GenericEntry motorCurrentEntry;
 
     private static final double kCommandTimeoutThreshold = 1;
 
@@ -40,10 +38,10 @@ public class TestBoardLoop extends LoopBase {
         HAL = TestBoardHAL.getInstance();
         status = TestBoardStatus.getInstance();
 
-        tab = Shuffleboard.getTab("TestBoard");
-        stateEntry = tab.add("State", "not updating").getEntry();
-        motorVoltageEntry = tab.add("Voltage", -686).getEntry();
-        motorCurrentEntry = tab.add("Current", -686).getEntry();
+        // tab = Shuffleboard.getTab("TestBoard");
+        // stateEntry = tab.add("State", "not updating").getEntry();
+        // motorVoltageEntry = tab.add("Voltage", -686).getEntry();
+        // motorCurrentEntry = tab.add("Current", -686).getEntry();
 
         _Subsystem = testBoard;
     }
@@ -73,9 +71,9 @@ public class TestBoardLoop extends LoopBase {
     public void Update() {
         status.setState(state);
 
-        stateEntry.setString(status.getState().name());
-        motorVoltageEntry.setDouble(status.getOutputVoltage());
-        motorCurrentEntry.setDouble(status.getStatorCurrent());
+        // stateEntry.setString(status.getState().name());
+        // motorVoltageEntry.setDouble(status.getOutputVoltage());
+        // motorCurrentEntry.setDouble(status.getStatorCurrent());
     }
 
     @Override

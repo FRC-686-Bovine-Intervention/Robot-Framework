@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.Logger;
 
 import frc.robot.subsystems.TestBoardLoop.TestBoardState;
+import io.github.oblarg.oblog.annotations.Log;
 
 public class TestBoardStatus extends StatusBase {
     private static TestBoardStatus instance;
@@ -11,7 +12,9 @@ public class TestBoardStatus extends StatusBase {
 
     private TestBoardState state;
 
+    @Log
     private double motorStatorCurrent;
+    @Log
     private double motorOutputVoltage;
 
     public double getStatorCurrent() {return motorStatorCurrent;}

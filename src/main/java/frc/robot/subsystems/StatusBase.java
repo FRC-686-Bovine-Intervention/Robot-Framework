@@ -3,7 +3,9 @@ package frc.robot.subsystems;
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 
-public abstract class StatusBase implements LoggableInputs{
+import io.github.oblarg.oblog.Loggable;
+
+public abstract class StatusBase implements LoggableInputs, Loggable{
     public enum EnabledState
     {
         Starting(true),

@@ -6,8 +6,9 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.StatusBase.EnabledState;
+import io.github.oblarg.oblog.Loggable;
 
-public abstract class LoopBase {
+public abstract class LoopBase implements Loggable {
     //TODO: Update documentation
     /**
      * <h3>MUST BE SET IN SUBCLASSES</h3><p>

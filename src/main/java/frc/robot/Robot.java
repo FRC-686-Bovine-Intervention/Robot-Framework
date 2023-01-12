@@ -4,36 +4,38 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.inputs.LoggedNetworkTables;
-import org.littletonrobotics.junction.io.ByteLogReceiver;
-import org.littletonrobotics.junction.io.ByteLogReplay;
-import org.littletonrobotics.junction.io.LogSocketServer;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import frc.robot.loops.OdometryStatus;
 import frc.robot.subsystems.SubsystemController;
 import frc.robot.subsystems.TestBoard;
 
 public class Robot extends LoggedRobot {
-
   SubsystemController subsystemController = SubsystemController.getInstance();
+
   @Override
   public void robotInit() {
     setUseTiming(isReal()); // Run as fast as possible during replay
-    LoggedNetworkTables.getInstance().addTable("/SmartDashboard"); // Log & replay "SmartDashboard" values (no tables are logged by default).
+    //LoggedNetworkTables.getInstance().addTable("/SmartDashboard"); // Log & replay "SmartDashboard" values (no tables are logged by default).
     Logger.getInstance().recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
     if (isReal()) {
-        Logger.getInstance().addDataReceiver(new ByteLogReceiver("/media/sda1/")); // Log to USB stick (name will be selected automatically)
-        Logger.getInstance().addDataReceiver(new LogSocketServer(5800)); // Provide log data over the network, viewable in Advantage Scope.
-    } else {
-        String path = ByteLogReplay.promptForPath(); // Prompt the user for a file path on the command line
-        Logger.getInstance().setReplaySource(new ByteLogReplay(path)); // Read log file for replay
-        Logger.getInstance().addDataReceiver(new ByteLogReceiver(ByteLogReceiver.addPathSuffix(path, "_sim"))); // Save replay results to a new log with the "_sim" suffix
-    }
+      Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/sda1"));
+      Logger.getInstance().addDataReceiver(new NT4Publisher());
+  } else {
+      String logPath = LogFileUtil.findReplayLog();
+      Logger.getInstance().setReplaySource(new WPILOGReader(logPath));
+      Logger.getInstance().addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+  }
 
     Logger.getInstance().start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
+
+    io.github.oblarg.oblog.Logger.configureLoggingAndConfig(this, false);
 
     OdometryStatus.getInstance().setReal(isReal());
 
@@ -44,6 +46,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     subsystemController.run();
+    io.github.oblarg.oblog.Logger.updateEntries();
   }
 
   @Override

@@ -2,7 +2,9 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 
-public class SubsystemController
+import io.github.oblarg.oblog.Loggable;
+
+public class SubsystemController implements Loggable
 {
     private static SubsystemController instance;
     public static SubsystemController getInstance() {if(instance == null){instance = new SubsystemController();}return instance;} 

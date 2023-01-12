@@ -1,7 +1,7 @@
 package frc.robot.controls;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.drive.Vector2d;
 import frc.robot.Constants;
 
 public class Controls {
@@ -18,12 +18,12 @@ public class Controls {
 
     public enum JoystickEnum {THRUSTMASTER, BUTTONBOARD}
     
-    public Vector2d getAxis(JoystickEnum joystick)
+    public Translation2d getAxis(JoystickEnum joystick)
     {
         switch(joystick)
         {
-            case THRUSTMASTER:  default:    return new Vector2d(-thrustmaster.getRawAxis(0),    -thrustmaster.getRawAxis(1));
-            case BUTTONBOARD:               return new Vector2d(buttonboard.getRawAxis(0),      buttonboard.getRawAxis(1));
+            case THRUSTMASTER:  default:    return new Translation2d(-thrustmaster.getRawAxis(0),    -thrustmaster.getRawAxis(1));
+            case BUTTONBOARD:               return new Translation2d(buttonboard.getRawAxis(0),      buttonboard.getRawAxis(1));
         }
     }
 

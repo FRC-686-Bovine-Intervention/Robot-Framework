@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
-import frc.robot.Constants;
 import frc.robot.loops.OdometryStatus;
 
 public class TestBoardHAL extends HALBase {
