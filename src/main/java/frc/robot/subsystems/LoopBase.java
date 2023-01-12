@@ -10,29 +10,20 @@ public abstract class LoopBase {
      * Recommended that you set it to a subclass of {@link SubsystemBase}, but can be set to {@link SubsystemBase} as a default
      */
     protected SubsystemBase Subsystem;
-    /**
-     * <h3>WARNING: DO NOT OVERRIDE UNLESS YOU KNOW WHAT YOU'RE DOING</h3><p>
-     * <h4>Called by {@link SubsystemController} when the robot starts</h4><p>
-     */
-    public void onStart()
+
+    public final void onStart()
     {
         checkForSubsystem();
         Subsystem.status.Enabled = EnabledState.Starting;
         onEverything();
     }
-    /**
-     * <h3>WARNING: DO NOT OVERRIDE UNLESS YOU KNOW WHAT YOU'RE DOING</h3><p>
-     * <h4>Called by {@link SubsystemController} every loop tick</h4><p>
-     */
-    public void onLoop()
+
+    public final void onLoop()
     {
         onEverything();
     }
-    /**
-     * <h3>WARNING: DO NOT OVERRIDE UNLESS YOU KNOW WHAT YOU'RE DOING</h3><p>
-     * <h4>Called by {@link SubsystemController} when the robot stops</h4><p>
-     */
-    public void onStop()
+
+    public final void onStop()
     {
         checkForSubsystem();
         Subsystem.status.Enabled = EnabledState.Stopping;

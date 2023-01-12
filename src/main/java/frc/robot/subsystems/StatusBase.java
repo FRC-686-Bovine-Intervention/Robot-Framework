@@ -30,7 +30,7 @@ public abstract class StatusBase implements LoggableInputs, Loggable{
     private boolean EnabledSwitch = true;
 
     @Override
-    public void toLog(LogTable table)
+    public final void toLog(LogTable table)
     {
         String prefix = Subsystem.getClass().getSimpleName();
         table.put(prefix + "/Enabled Switch", EnabledSwitch);
@@ -40,7 +40,7 @@ public abstract class StatusBase implements LoggableInputs, Loggable{
     public abstract void exportToTable(LogTable table, String prefix);
 
     @Override
-    public void fromLog(LogTable table)
+    public final void fromLog(LogTable table)
     {
         String prefix = Subsystem.getClass().getSimpleName();
         EnabledSwitch = table.getBoolean(prefix + "/Enabled Switch", true);
@@ -64,7 +64,7 @@ public abstract class StatusBase implements LoggableInputs, Loggable{
     }
     public abstract void importFromTable(LogTable table, String prefix);
 
-    public void inputs()
+    public final void inputs()
     {
         if(EnabledEntry == null)
             EnabledSwitch = true;
@@ -91,7 +91,7 @@ public abstract class StatusBase implements LoggableInputs, Loggable{
     }
     public abstract void updateInputs();
 
-    public void record()
+    public final void record()
     {
         String prefix = Subsystem.getClass().getSimpleName();
         Logger.getInstance().recordOutput(prefix + "/Enabled Switch", EnabledSwitch);
